@@ -1,4 +1,4 @@
 export interface TypeKeyAES {
-  sigBytes: number;
-  words: Array<number>;
+  key: { sigBytes: number; words: Array<number> };
+  iv: { sigBytes: number; words: Array<number> };
 }

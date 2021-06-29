@@ -42,5 +42,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  titleTable: {
+    width: "25%",
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+  },
+  textTable: {
+    width: "25%",
+
+    //  alignItems: "center",
+    // justifyContent: "center",
+  },
 });
 export default styles;

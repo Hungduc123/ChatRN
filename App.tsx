@@ -17,6 +17,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { Provider } from "react-redux";
 import store from "./store";
 import Chat from "./components/Chat";
+import ListChat from "./components/ListChat";
+import Tracking from "./components/Tracking";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -24,27 +26,28 @@ export default function App() {
   function HomeStack() {
     return (
       <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
+        // screenOptions={({ route }) => ({
+        //   tabBarIcon: ({ focused, color, size }) => {
+        //     let iconName;
 
-            if (route.name === "ListFriend") {
-              iconName = focused
-                ? "ios-information-circle"
-                : "ios-information-circle-outline";
-            } else if (route.name === "Setting") {
-              iconName = focused ? "list" : "ios-list";
-            }
+        //     if (route.name === "ListFriend") {
+        //       iconName = focused
+        //         ? "ios-information-circle"
+        //         : "ios-information-circle-outline";
+        //     } else if (route.name === "Setting") {
+        //       iconName = focused ? "list" : "ios-list";
+        //     }
 
-            // You can return any component that you like here!
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-        })}
+        //     // You can return any component that you like here!
+        //     return <Ionicons name={iconName} size={size} color={color} />;
+        //   },
+        // })}
         tabBarOptions={{
           activeTintColor: "tomato",
           inactiveTintColor: "gray",
         }}
       >
+        <Tab.Screen name="Tracking" component={Tracking} />
         <Tab.Screen name="ListFriend" component={ListFriend} />
         <Tab.Screen name="Setting" component={Setting} />
       </Tab.Navigator>
@@ -67,6 +70,7 @@ export default function App() {
             }}
           />
           <Stack.Screen name="Chat" component={Chat} />
+          <Stack.Screen name="ListChat" component={ListChat} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

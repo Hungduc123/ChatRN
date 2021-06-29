@@ -5,4 +5,6 @@ export type RootStackParamList = {
     Setting: undefined;
     ListFriend: undefined;
     Chat: undefined;
+    ListChat: undefined;
+    Tracking: undefined;
     };

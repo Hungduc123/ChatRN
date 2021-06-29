@@ -22,7 +22,7 @@ export default function Setting() {
   const [email, setEmail] = useState<string>(
     JSON.stringify(firebaseApp.auth().currentUser)
   );
-  const key = useSelector((state: any) => state.PrivateKey);
+  const key = useSelector((state: any) => state.PublicKey);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -79,7 +79,7 @@ export default function Setting() {
       >
         <Text>Logout</Text>
       </TouchableOpacity>
-      <Text>{key.d}</Text>
+      <Text>{JSON.stringify(key)}</Text>
     </SafeAreaView>
   );
 }

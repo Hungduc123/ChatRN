@@ -7,5 +7,6 @@ interface dataUser {
   uid?: string;
   uk?: string;
   pk?: string;
+  isDoctored?: boolean;
 }
 export default dataUser;

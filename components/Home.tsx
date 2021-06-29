@@ -8,9 +8,5 @@ import { CurrentUser } from "../slice/CurrentUser";
 import { useDispatch } from "react-redux";
 
 export default function Home() {
-  return (
-    <SafeAreaView style={styles.container}>
-      <Text>Home {firebaseApp.auth().currentUser.email}</Text>
-    </SafeAreaView>
-  );
+  return <SafeAreaView style={styles.container}></SafeAreaView>;
 }

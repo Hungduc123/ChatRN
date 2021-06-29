@@ -45,9 +45,10 @@ function Register() {
       .then(() => {
         console.log("User account created & signed in!");
         let uid = firebaseApp.auth().currentUser.uid;
+        let isDoctored = false;
         let profileImg =
           "https://e7.pngegg.com/pngimages/505/761/png-clipart-login-computer-icons-avatar-icon-monochrome-black-thumbnail.png";
-        AddUser(fullName, email, uid, profileImg).then(() => {
+        AddUser(fullName, email, uid, profileImg, isDoctored).then(() => {
           // setAsyncStorage(keys.uuid, uid);
           // setUniqueValue(uid);
 

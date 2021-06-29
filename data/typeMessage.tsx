@@ -1,6 +1,6 @@
 interface typeMessage {
   sendBy: string;
-  recievedBy: string;
+  receivedBy: string;
   msg: string;
   img: string;
   time: string;

@@ -5,7 +5,8 @@ export const AddUser = async (
   name: string,
   email: string,
   uid: string,
-  profileImg: string
+  profileImg: string,
+  isDoctored: boolean
 ) => {
   let friends: FirebaseAuthTypes.User[] = [];
   try {
@@ -18,7 +19,26 @@ export const AddUser = async (
         uid: uid,
         profileImg: profileImg,
         friends: friends,
+        isDoctored: isDoctored,
       });
+  } catch (e) {
+    return e;
+  }
+};
+export const AddRSA = async (
+  uidSender: string,
+  uiReceiver: string,
+  keyAES: string
+) => {
+  let friends: FirebaseAuthTypes.User[] = [];
+  try {
+    return await firebaseApp
+      .database()
+      .ref("RSA/" + uidSender)
+      .set(
+        // key AES
+        keyAES
+      );
   } catch (e) {
     return e;
   }

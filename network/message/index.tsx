@@ -13,9 +13,9 @@ export const senderMsg = async (
       .ref("messages/" + currentUserId)
       .child(guestUserId)
       .push({
-        messege: {
+        messene: {
           sender: currentUserId,
-          reciever: guestUserId,
+          receiver: guestUserId,
           msg: msgValue,
           img: img,
           time: time,
@@ -26,7 +26,7 @@ export const senderMsg = async (
   }
 };
 
-export const recieverMsg = async (
+export const receiverMsg = async (
   msgValue: string,
   currentUserId: string,
   guestUserId: string,
@@ -39,9 +39,9 @@ export const recieverMsg = async (
       .ref("messages/" + guestUserId)
       .child(currentUserId)
       .push({
-        messege: {
+        messene: {
           sender: currentUserId,
-          reciever: guestUserId,
+          receiver: guestUserId,
           msg: msgValue,
           img: img,
           time: time,

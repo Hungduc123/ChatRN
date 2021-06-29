@@ -1,19 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { TypeAES } from "../data/key";
+
+import typeAccountDoctor from "../data/typeAccountDoctor";
 
 // var data:dataItem
-const data: string = "";
+const data: string | null = null;
 const slice = createSlice({
-  name: "KeyAES",
+  name: "AccountDoctorLogin",
   initialState: data,
 
   reducers: {
-    KeyAES: (state, action) => {
+    AccountDoctorLogin: (state, action) => {
       state = action.payload;
-      return state;
     },
   },
 });
 const { reducer, actions } = slice;
-export const { KeyAES } = actions;
+export const { AccountDoctorLogin } = actions;
 export default reducer;
