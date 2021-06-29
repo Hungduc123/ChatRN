@@ -77,7 +77,7 @@ export default function Tracking() {
       //   setReport(res.data);
       // });
 
-      setReport(country.timeline);
+      setReport(country.timeline.reverse());
     }
   }, [countries, selectedCountryId, data]);
 
