@@ -40,6 +40,8 @@ import { Card } from "native-base";
 import TypeTinh from "../../../data/TypeTinh";
 import styles from "../../../styles/styles";
 import TabSoCa from "../../TabSoCa";
+import moment from "moment";
+import colors from "../../../colors/colors";
 export default function HighMaps() {
   const [options, setOptions] = useState({});
   const [region, setRegion] = useState({});
@@ -51,6 +53,7 @@ export default function HighMaps() {
   const [soDangDieuTri, setSoDangDieuTri] = useState<any>();
   const [soHoiPhuc, setSoHoiPhuc] = useState<any>();
   const [soTuVong, setSoTuVong] = useState<any>();
+  const [dayUpdate, setDayUpdate] = useState<string>();
 
   // const [timeUpdate, setTimeUpdate] = useState<string>("");
   useEffect(() => {
@@ -58,6 +61,9 @@ export default function HighMaps() {
       setArr(res.data.key);
     });
     getDetail().then((res) => {
+      setDayUpdate(
+        moment(res.data.lastUpdatedAtApify).format("MMMM Do YYYY, h:mm:ss a")
+      );
       setDetails(res.data.detail);
       setSoNhiem(res.data.infected);
       setSoDangDieuTri(res.data.treated);
@@ -323,6 +329,8 @@ export default function HighMaps() {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text>Số Liệu Của Việt Nam</Text>
+      <Text>Update {dayUpdate} </Text>
+
       <TabSoCa
         soNhiem={soNhiem}
         soDangDieuTri={soDangDieuTri}
@@ -333,12 +341,12 @@ export default function HighMaps() {
         <View
           style={{
             flexDirection: "row",
-            height: 50,
+
             justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <Card style={styles.titleTable}>
+          {/* <Card style={styles.titleTable}>
             <Text>Tỉnh/ Thành phố</Text>
           </Card>
 
@@ -352,8 +360,24 @@ export default function HighMaps() {
 
           <Card style={styles.titleTable}>
             <Text>Số ca tử vong</Text>
-          </Card>
+          </Card> */}
+          <Text style={[styles.textTable, { fontSize: 17, color: "black" }]}>
+            Tỉnh/ Thành phố
+          </Text>
+
+          <Text style={[styles.textTable, { fontSize: 17, color: "black" }]}>
+            Số ca nhiễm
+          </Text>
+
+          <Text style={[styles.textTable, { fontSize: 17, color: "black" }]}>
+            Số ca khỏi
+          </Text>
+
+          <Text style={[styles.textTable, { fontSize: 17, color: "black" }]}>
+            Số ca tử vong
+          </Text>
         </View>
+
         <FlatList
           style={{ flex: 1 }}
           data={data}
@@ -364,17 +388,23 @@ export default function HighMaps() {
             <Card
               style={{
                 flexDirection: "row",
-                height: 30,
+                padding: 10,
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 5,
               }}
             >
               <Text style={styles.textTable}>{item.name}</Text>
-              <Text style={styles.textTable}>{item.value}</Text>
-              <Text style={styles.textTable}>{item.socakhoi}</Text>
+              <Text style={[styles.textTable, { color: "red" }]}>
+                {item.value}
+              </Text>
+              <Text style={[styles.textTable, { color: "green" }]}>
+                {item.socakhoi}
+              </Text>
               {/* <Text style={{width:"25%",height:30,alignItems:"center",justifyContent: "center"}}>{item.socadangdieutri}</Text> */}
-              <Text style={styles.textTable}>{item.socatuvong}</Text>
+              <Text style={[styles.textTable, { color: "gray" }]}>
+                {item.socatuvong}
+              </Text>
             </Card>
           )}
         ></FlatList>

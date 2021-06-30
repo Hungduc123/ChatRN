@@ -1,13 +1,15 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
-import { View, Text, SafeAreaView, ScrollView } from "react-native";
 import {
-  getCountries,
-  getData,
-  getDataChart,
-  getReportByCountry,
-} from "../apis";
+  View,
+  Text,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+} from "react-native";
+import { getCountries, getDataChart, getReportByCountry } from "../apis";
 import styles from "../styles/styles";
 import HighMaps from "./Chart/HighMaps";
 import CountrySelector from "./CountrySelector";
@@ -17,6 +19,8 @@ import Summary from "./Summary";
 import _ from "lodash";
 import { then } from "../metro.config";
 import LineChartMini from "./LineChartMini";
+import { AntDesign } from "@expo/vector-icons";
+
 type TrackingScreenProp = StackNavigationProp<RootStackParamList, "ListFriend">;
 export default function Tracking() {
   const navigation = useNavigation<TrackingScreenProp>();
@@ -29,7 +33,7 @@ export default function Tracking() {
   const [canhiem, setCanhiem] = useState<any>([]);
   const [catuvong, setCatuvong] = useState<any>([]);
   const [slug, setSlug] = useState<any>(" aaa");
-  const [data, setData] = useState<any>([]);
+  const [openChart, setOpenChart] = useState<boolean>(false);
 
   const handleOnChange = (e: any) => {
     console.log({ e });
@@ -38,49 +42,47 @@ export default function Tracking() {
     }
   };
   useEffect(() => {
-    getData().then((res) => {
-      console.log("====================================");
-      console.log("res");
-      console.log(res);
-
-      console.log("====================================");
-      const ct = res.data.data.map((item: any) => {
-        return { Country: item.name, ISO2: item.code };
-      });
-      const countries = _.sortBy(ct, "name");
+    getCountries().then((res: any) => {
+      console.log({ res });
+      const countries = _.sortBy(res.data, "Country");
 
       setCountries(countries);
       setSelectedCountryId("VN");
-      setData(res.data.data);
+    });
+    getDataChart().then((res) => {
+      console.log("====================================");
+      console.log("getDataChart");
+      console.log(res);
+
+      console.log("====================================");
+      // setChartMini({
+      //   cakhoi: res.data.cakhoi,
+      //   canhiem: res.data.canhiem,
+      //   catuvong: res.data.catuvong,
+      // });
+      setCakhoi(res.data.cakhoi);
+      setCanhiem(res.data.canhiem);
+
+      setCatuvong(res.data.catuvong);
     });
   }, []);
   useEffect(() => {
-    if (
-      selectedCountryId !== "" &&
-      countries.length !== 0 &&
-      data.length !== 0
-    ) {
-      console.log(" data");
-      console.log(data);
-      const country = data.find(
-        (country: any) => country.code === selectedCountryId
+    if (selectedCountryId !== "" && countries !== []) {
+      const { Slug } = countries.find(
+        (country: any) => country.ISO2 === selectedCountryId
       );
-      console.log(" selectedCountryId");
-      console.log(selectedCountryId);
-      console.log(" country");
-      console.log(country);
-      // setSlug(country.name);
+      console.log("{ Slug }");
+      console.log(Slug);
+      setSlug(Slug);
       //call api
-      // getReportByCountry(Slug).then((res) => {
-      //   //xoa item cuoi
-      //   res.data.pop();
-      //   setReport(res.data);
-      // });
-
-      setReport(country.timeline.reverse());
+      getReportByCountry(Slug).then((res) => {
+        //xoa item cuoi
+        console.log({ res });
+        res.data.pop();
+        setReport(res.data);
+      });
     }
-  }, [countries, selectedCountryId, data]);
-
+  }, [countries, selectedCountryId]);
   return (
     <SafeAreaView style={styles.container}>
       <CountrySelector
@@ -88,13 +90,13 @@ export default function Tracking() {
         countries={countries}
         handleOnChange={handleOnChange}
       ></CountrySelector>
-      <Summary
-        slug={slug}
-        report={report}
-        selectedCountryId={selectedCountryId}
-      ></Summary>
-      {/* <ScrollView style={{ flex: 1, width: "100%" }}>
-      
+
+      <ScrollView style={{ flex: 1, width: "100%" }}>
+        <Summary
+          slug={slug}
+          report={report}
+          selectedCountryId={selectedCountryId}
+        ></Summary>
 
         <Highlight report={report}></Highlight>
 
@@ -104,6 +106,7 @@ export default function Tracking() {
             data={cakhoi}
             titleTable="Ca Khỏi"
           ></LineChartMini>
+
           <LineChartMini
             colorLineChart={"red"}
             data={canhiem}
@@ -118,7 +121,7 @@ export default function Tracking() {
         </View>
 
         <HighMaps></HighMaps>
-      </ScrollView> */}
+      </ScrollView>
     </SafeAreaView>
   );
 }

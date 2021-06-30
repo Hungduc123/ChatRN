@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
   },
   textTable: {
     width: "25%",
+    fontSize: 15,
 
     //  alignItems: "center",
     // justifyContent: "center",

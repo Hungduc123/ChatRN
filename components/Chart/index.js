@@ -5,9 +5,7 @@ import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 import HighchartsReactNative from "@highcharts/highcharts-react-native";
 import moment from "moment";
 const generateOptions = (data, slug) => {
-  const categories = data.map((item) =>
-    moment(item.updated_at).format("DD/MM/YYYY")
-  );
+  const categories = data.map((item) => moment(item.Date).format("DD/MM/YYYY"));
 
   return {
     chart: {
@@ -27,7 +25,7 @@ const generateOptions = (data, slug) => {
     series: [
       {
         name: `Tổng ca nhiễm của ${slug}`,
-        data: data.map((item) => item.confirmed),
+        data: data.map((item) => item.Confirmed),
       },
     ],
     tooltip: {
