@@ -7,4 +7,6 @@ export type RootStackParamList = {
     Chat: undefined;
     ListChat: undefined;
     Tracking: undefined;
+    KhaiBaoYTe: undefined;
+    HistoryKhaiBaoYTe:{ id: 'latest' | 'top' } | undefined;
     };

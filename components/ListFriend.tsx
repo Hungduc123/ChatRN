@@ -66,14 +66,12 @@ export default function ListFriend() {
   var RSAKey = require("react-native-rsa");
   var rsa = new RSAKey();
   const dispatch = useDispatch();
-  let tempKeyAES = {};
+
   // let dataUserCurrent: FirebaseAuthTypes.User;
   const navigation = useNavigation<ListFriendScreenProp>();
   const userCurrent = firebaseApp.auth().currentUser;
-  // const actionKeyAES = KeyAES(JSON.stringify(tempKeyAES));
-  // dispatch(actionKeyAES);
-
   const [userDetail, setUserDetail] = useState<dataUser>({});
+  const [doctor, setDoctor] = useState<any>("");
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   const genKey = async () => {
@@ -160,64 +158,10 @@ export default function ListFriend() {
               currentUser.uid = child.val().uid;
               currentUser.isDoctored = child.val().isDoctored;
             } else if (child.val().name === "Doctor") {
-              const action = chooseItem({
-                isDoctored: true,
-                name: child.val().name,
-                uid: child.val().uid,
-              });
-              dispatch(action);
+              setDoctor(child.val());
             }
           });
           setUserDetail(currentUser);
-          if (!currentUser.isDoctored) {
-            try {
-              const value = await AsyncStorage.getItem(
-                `keyAES ${userCurrent.uid}}`
-              );
-              if (value !== null) {
-                const actionKeyAES = KeyAES(value);
-                dispatch(actionKeyAES);
-                console.log("already");
-              } else {
-                console.log("new");
-
-                // const key = CryptoJS.enc.Utf8.parse(
-                //   Math.floor(Math.random() * 0xffffffffffffffff).toString(16)
-                // );
-
-                // const iv = CryptoJS.enc.Utf8.parse(
-                //   Math.floor(Math.random() * 0xffffffffffffffff).toString(16)
-                // );
-                const key = CryptoJS.enc.Utf8.parse(
-                  Math.floor(Math.random() * 0xffffffffffffffff).toString(16)
-                );
-                console.log("====================================");
-                console.log(key);
-                console.log("====================================");
-                const iv = CryptoJS.enc.Utf8.parse(
-                  Math.floor(Math.random() * 0xffffffffffffffff).toString(16)
-                );
-                console.log("====================================");
-                console.log(iv);
-                console.log("====================================");
-                const actionKeyAES = KeyAES(JSON.stringify({ key, iv }));
-                dispatch(actionKeyAES);
-                ///////////////
-                try {
-                  await AsyncStorage.setItem(
-                    `keyAES ${userCurrent.uid}}`,
-                    JSON.stringify({ key, iv })
-                  );
-                } catch (error) {
-                  console.log(error);
-
-                  // Error saving data
-                }
-              }
-            } catch (error) {
-              // Error retrieving data
-            }
-          }
         });
     } catch (error) {
       console.log(error);
@@ -348,6 +292,8 @@ export default function ListFriend() {
         <TouchableOpacity
           onPress={() => {
             if (!userDetail.isDoctored) {
+              const action = chooseItem({ ...doctor });
+              dispatch(action);
               navigation.navigate("Chat");
             } else {
               navigation.navigate("ListChat");
@@ -377,12 +323,26 @@ export default function ListFriend() {
 
           <Text>{userDetail.name}</Text>
         </Card>
-        {/* <FlatList
-        style={{ flex: 1 }}
-        data={allUsers}
-        keyExtractor={(item) => item.uid!.toString()}
-        renderItem={({ item }) => <RenderItem it={item}></RenderItem>}
-      ></FlatList> */}
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("KhaiBaoYTe");
+          }}
+        >
+          <Card>
+            <Text>Khai Báo y tế</Text>
+          </Card>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            const action = chooseItem({ ...userDetail });
+            dispatch(action);
+            navigation.navigate("HistoryKhaiBaoYTe");
+          }}
+        >
+          <Card>
+            <Text>Lịch sử khai báo y tế</Text>
+          </Card>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );

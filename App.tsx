@@ -19,6 +19,8 @@ import store from "./store";
 import Chat from "./components/Chat";
 import ListChat from "./components/ListChat";
 import Tracking from "./components/Tracking";
+import KhaiBaoYTe from "./components/FormKhaiBaoYte";
+import HistoryKhaiBaoYTe from "./components/HistoryKhaiBaoYTe";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -73,6 +75,11 @@ export default function App() {
           />
           <Stack.Screen name="Chat" component={Chat} />
           <Stack.Screen name="ListChat" component={ListChat} />
+          <Stack.Screen name="KhaiBaoYTe" component={KhaiBaoYTe} />
+          <Stack.Screen
+            name="HistoryKhaiBaoYTe"
+            component={HistoryKhaiBaoYTe}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
