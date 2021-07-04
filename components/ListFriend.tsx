@@ -73,7 +73,10 @@ export default function ListFriend() {
   const [userDetail, setUserDetail] = useState<any>({});
   const [doctor, setDoctor] = useState<any>({});
   const [keyAesStore, setKeyAesStore] = useState<any>(null);
-  const [keyAESFinal, setKeyAESFinal] = useState<any>(null);
+  // const [keyAESFinal, setKeyAESFinal] = useState<any>(null);
+  const [ukItemChoose, setUkItemChoose] = useState<any>(null);
+  const [keyAesDatabase, setKeyAesDatabase] = useState<any>(null);
+  const [pk, setPk] = useState<any>(null);
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   const genKey = async () => {
@@ -99,6 +102,7 @@ export default function ListFriend() {
     const actionPk = PrivateKey({
       ...privateKey,
     });
+    setPk({ ...privateKey });
     dispatch(actionPk);
     dispatch(actionUk);
     await pushKey(publicKey);
@@ -221,10 +225,6 @@ export default function ListFriend() {
         const action = KeyAES(keyAesStore);
         dispatch(action);
         setKeyAesStore(JSON.parse(keyAesStore));
-        setKeyAESFinal({
-          decryptedKey: JSON.parse(keyAesStore).key,
-          decryptedKIv: JSON.parse(keyAesStore).iv,
-        });
       } else {
         console.log("create key AES");
         const key = CryptoJS.enc.Utf8.parse("0123456789abcdef");
@@ -241,7 +241,7 @@ export default function ListFriend() {
             JSON.stringify({ key, iv })
           );
         } catch (error) {
-          // Error saving data
+          console.log(error);
         }
         const action = KeyAES(
           JSON.stringify({
@@ -250,35 +250,107 @@ export default function ListFriend() {
           })
         );
         dispatch(action);
-        setKeyAESFinal({
-          decryptedKey: key,
-          decryptedKIv: iv,
-        });
+
         setKeyAesStore({ key, iv });
       }
     } catch (error) {
       console.log(error);
     }
   };
-  useEffect(() => {
-    console.log("have data");
-    console.log({ userDetail });
-    console.log({ doctor });
+  const getUkRSADatabase = async (itemChoose: any) => {
+    let tempUkReceiver;
+    try {
+      await firebaseApp
+        .database()
+        .ref("publicKey/" + itemChoose.uid)
+        .once("value", async (dataSnapshot: any) => {
+          tempUkReceiver = { ...dataSnapshot.val() };
+          console.log("ukReceiver");
+          console.log(tempUkReceiver);
+          setUkItemChoose(tempUkReceiver);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const encodeAndSendKeyAesByRsa = async (
+    currentUser: any,
+    itemChoose: any,
+    ukItemChoose: any,
+    keyAesStore: any
+  ) => {
+    await rsa.setPublicString(JSON.stringify({ ...ukItemChoose }));
 
+    let encryptedKey = await rsa.encrypt(JSON.stringify(keyAesStore.key));
+    let encryptedIv = await rsa.encrypt(JSON.stringify(keyAesStore.iv));
+
+    console.log("====================================");
+    console.log("encryptedKey   " + encryptedKey);
+    console.log("====================================");
+    console.log("====================================");
+    console.log("encryptedIv    " + encryptedIv);
+    console.log("====================================");
+    console.log("====================================");
+
+    console.log({ itemChoose });
+    console.log("====================================");
+    console.log("====================================");
+    console.log({ ukItemChoose });
+    console.log("====================================");
+
+    ////////////////////////////////////////
+    ///send rsa
+
+    await firebaseApp
+      .database()
+      .ref("RSA/" + currentUser.uid)
+      .child(itemChoose.uid)
+      .set({
+        messageRSA: {
+          sender: currentUser.uid,
+          receiver: itemChoose.uid,
+          encryptedKey: encryptedKey,
+          encryptedIv: encryptedIv,
+        },
+      });
+    await firebaseApp
+      .database()
+      .ref("RSA/" + itemChoose.uid)
+      .child(currentUser.uid)
+      .set({
+        messageRSA: {
+          sender: currentUser.uid,
+          receiver: itemChoose.uid,
+          encryptedKey: encryptedKey,
+          encryptedIv: encryptedIv,
+        },
+      });
+  };
+
+  useEffect(() => {
     if (userDetail && doctor) {
       console.log("====================================");
       console.log("aaaaaaaaaaaaa");
       console.log("====================================");
-      if (doctor.isDoctored) {
+      if (userDetail.isDoctored === false) {
         getKeyAesStore(userDetail, doctor);
         console.log(" doIt a");
       }
-      // if (!itemChoose.isDoctored) {
-      //   await getKeyAesDatabase(currentUser, itemChoose);
-      //   console.log(" doIt docter");
-      // }
     }
   }, [userDetail, doctor]);
+  useEffect(() => {
+    if (keyAesStore !== null) {
+      getUkRSADatabase(doctor);
+    }
+  }, [keyAesStore, doctor]);
+  useEffect(() => {
+    if (ukItemChoose !== null && keyAesStore !== null) {
+      console.log({ ukItemChoose });
+      console.log({ keyAesStore });
+
+      encodeAndSendKeyAesByRsa(userDetail, doctor, ukItemChoose, keyAesStore);
+    }
+  }, [ukItemChoose, keyAesStore, userDetail, doctor]);
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
