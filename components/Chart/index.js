@@ -15,7 +15,7 @@ const generateOptions = (data, slug) => {
       text: `Tổng ca nhiễm của ${slug}`,
     },
     xAxis: { categories: categories, crosshair: true },
-    colors: ["#F3585B"],
+    colors: ["#563CCF"],
     yAxis: {
       min: 0,
       title: {
@@ -72,10 +72,12 @@ export default function LineChart({ data, slug }) {
           }}
           style={[
             styles.Buttons,
-            { backgroundColor: reportType === "all" ? "#FA4A0C" : "white" },
+            { backgroundColor: reportType === "all" ? "#563CCF" : "white" },
           ]}
         >
-          <Text>All</Text>
+          <Text style={{ color: reportType === "all" ? "white" : "black" }}>
+            All
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
@@ -83,10 +85,12 @@ export default function LineChart({ data, slug }) {
           }}
           style={[
             styles.Buttons,
-            { backgroundColor: reportType === "7day" ? "#FA4A0C" : "white" },
+            { backgroundColor: reportType === "7day" ? "#563CCF" : "white" },
           ]}
         >
-          <Text>7 Days</Text>
+          <Text style={{ color: reportType === "7day" ? "white" : "black" }}>
+            7 Days
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
@@ -94,10 +98,12 @@ export default function LineChart({ data, slug }) {
           }}
           style={[
             styles.Buttons,
-            { backgroundColor: reportType === "30day" ? "#FA4A0C" : "white" },
+            { backgroundColor: reportType === "30day" ? "#563CCF" : "white" },
           ]}
         >
-          <Text>30 Days</Text>
+          <Text style={{ color: reportType === "30day" ? "white" : "black" }}>
+            30 Days
+          </Text>
         </TouchableOpacity>
       </Card>
       <Card style={[styles.container, { borderRadius: 15 }]}>

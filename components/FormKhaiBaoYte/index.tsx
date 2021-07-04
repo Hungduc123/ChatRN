@@ -18,6 +18,8 @@ import { useNavigation } from "@react-navigation/native";
 import QRCode from "react-native-qrcode-svg";
 import moment from "moment";
 import firebaseApp from "../../firebase/config.js";
+import { useSelector } from "react-redux";
+import CryptoJS from "crypto-js";
 
 type FormKhaiBaoYTeScreenProp = StackNavigationProp<
   RootStackParamList,
@@ -26,6 +28,7 @@ type FormKhaiBaoYTeScreenProp = StackNavigationProp<
 
 export default function FormKhaiBaoYte() {
   const currentUser = firebaseApp.auth().currentUser;
+  const keyAES = useSelector((state: any) => state.KeyAES);
 
   const navigation = useNavigation<FormKhaiBaoYTeScreenProp>();
   useLayoutEffect(() => {
@@ -55,26 +58,48 @@ export default function FormKhaiBaoYte() {
     },
   });
   const pushQrKhaiBaoYTe = async (data: any) => {
+    console.log("====================================");
+    console.log({ keyAES });
+    console.log("====================================");
+    let key = JSON.parse(keyAES);
+    console.log("====================================");
+    console.log({ key });
+    console.log("====================================");
+    let sendData = CryptoJS.enc.Utf8.parse(JSON.stringify(data));
+    let encrypted = CryptoJS.AES.encrypt(sendData, key.key, {
+      iv: key.iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+    console.log(encrypted.toString());
     try {
       await firebaseApp
         .database()
         .ref("QRKhaiBaoYTe/" + `${currentUser.uid}`)
-        .push({
-          ten: data["Họ tên (ghi chữ IN HOA)"],
-
-          cmnd: data["Số hộ chiếu / CMND / CCCD"],
-          namSinh: data["Năm sinh"],
-          gioiTinh: data["Giới tính"],
-          quocTich: data["Quốc tịch"],
-          tinhThanh: data["Tỉnh thành"],
-          quanHuyen: data["Quận / huyện"],
-          phuongXa: data["Phường / xã"],
-          soNha: data["Số nhà, phố, tổ dân phố/thôn/đội "],
-          time: moment().format("MMMM Do YYYY, h:mm:ss a"),
-        });
+        .push(encrypted.toString());
     } catch (error) {
       console.log(error);
     }
+    // try {
+    //   await firebaseApp
+    //     .database()
+    //     .ref("QRKhaiBaoYTe/" + `${currentUser.uid}`)
+    //     .push({
+    //       ten: data["Họ tên (ghi chữ IN HOA)"],
+
+    //       cmnd: data["Số hộ chiếu / CMND / CCCD"],
+    //       namSinh: data["Năm sinh"],
+    //       gioiTinh: data["Giới tính"],
+    //       quocTich: data["Quốc tịch"],
+    //       tinhThanh: data["Tỉnh thành"],
+    //       quanHuyen: data["Quận / huyện"],
+    //       phuongXa: data["Phường / xã"],
+    //       soNha: data["Số nhà, phố, tổ dân phố/thôn/đội "],
+    //       time: moment().format("MMMM Do YYYY, h:mm:ss a"),
+    //     });
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
   const onSubmit = async (data: any) => {
     setData({ ...data, time: moment().format("MMMM Do YYYY, h:mm:ss a") });

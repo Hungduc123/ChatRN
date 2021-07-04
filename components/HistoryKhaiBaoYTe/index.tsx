@@ -18,6 +18,7 @@ export default function HistoryKhaiBaoYTe(id: any) {
   const navigation = useNavigation<HistoryYTeScreenProp>();
   const itemChoose = useSelector((state: any) => state.chooseItem);
   const [data, setData] = useState<Array<any>>([]);
+  const keyAES = useSelector((state: any) => state.KeyAES);
   useLayoutEffect(() => {
     navigation.setOptions({
       title: "Lịch sử Khai Báo y tế",

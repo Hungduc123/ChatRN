@@ -2,6 +2,13 @@ import { Dimensions, StyleSheet } from "react-native";
 import colors from "../colors/colors";
 const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
+  tab: {
+    width: "32%",
+    padding: 10,
+    justifyContent: "space-around",
+    alignItems: "center",
+    borderRadius: 15,
+  },
   container: {
     flex: 1,
     justifyContent: "center",

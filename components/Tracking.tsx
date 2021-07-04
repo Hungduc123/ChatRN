@@ -8,6 +8,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
+  Image,
+  ImageBackground,
 } from "react-native";
 import { getCountries, getDataChart, getReportByCountry } from "../apis";
 import styles from "../styles/styles";
@@ -20,9 +22,13 @@ import _ from "lodash";
 import { then } from "../metro.config";
 import LineChartMini from "./LineChartMini";
 import { AntDesign } from "@expo/vector-icons";
+import { Card } from "native-base";
+import { DataInVietNam } from "../slice/DataInVietNam";
+import { useDispatch } from "react-redux";
 
 type TrackingScreenProp = StackNavigationProp<RootStackParamList, "ListFriend">;
 export default function Tracking() {
+  const dispatch = useDispatch();
   const navigation = useNavigation<TrackingScreenProp>();
 
   const [countries, setCountries] = useState<any>([]);
@@ -92,11 +98,8 @@ export default function Tracking() {
       ></CountrySelector>
 
       <ScrollView style={{ flex: 1, width: "100%" }}>
-        <Summary
-          slug={slug}
-          report={report}
-          selectedCountryId={selectedCountryId}
-        ></Summary>
+        {/* 
+   
 
         <Highlight report={report}></Highlight>
 
@@ -120,7 +123,165 @@ export default function Tracking() {
           ></LineChartMini>
         </View>
 
-        <HighMaps></HighMaps>
+        <HighMaps></HighMaps> */}
+        <ImageBackground
+          source={require("../assets/background_header.png")}
+          style={{
+            width: "100%",
+            height: 150,
+            justifyContent: "center",
+            //   alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              padding: 10,
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontSize: 20, color: "white" }}>Fight Covid-19</Text>
+            <Image
+              source={require("../assets/vector_ek1.png")}
+              style={{ width: 20, height: 20 }}
+            />
+          </View>
+          <Image
+            source={require("../assets/background_bottom_navbar.png")}
+            style={{ width: "80%", height: "20%", left: 20 }}
+          />
+        </ImageBackground>
+        <Highlight report={report}></Highlight>
+        <Summary
+          slug={slug}
+          report={report}
+          selectedCountryId={selectedCountryId}
+        ></Summary>
+        <View style={{ width: "100%", height: 150, padding: 5 }}>
+          <Image
+            source={require("../assets/group_2239.png")}
+            style={{
+              width: "100%",
+              height: "100%",
+              resizeMode: "stretch",
+              padding: 10,
+            }}
+          />
+        </View>
+        <Text>Layanan Fight Covid-19</Text>
+        <View
+          style={{
+            width: "100%",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            padding: 10,
+          }}
+        >
+          <Card style={styles.tab}>
+            <Image
+              source={require("../assets/mask_group_ek3.png")}
+              style={{
+                width: 70,
+                height: 70,
+                resizeMode: "contain",
+                padding: 10,
+              }}
+            />
+            <Text style={{ fontSize: 20, color: "red" }}>number</Text>
+
+            <Text>number</Text>
+          </Card>
+          <Card style={styles.tab}>
+            <Image
+              source={require("../assets/mask_group_ek5.png")}
+              style={{
+                width: 70,
+                height: 70,
+                resizeMode: "contain",
+                padding: 10,
+              }}
+            />
+            <Text style={{ fontSize: 20, color: "red" }}>number</Text>
+
+            <Text>number</Text>
+          </Card>
+
+          <Card style={styles.tab}>
+            <TouchableOpacity
+              onPress={() => {
+                const action = DataInVietNam({ cakhoi, canhiem, catuvong });
+                dispatch(action);
+                navigation.navigate("DataInVietNam");
+              }}
+              style={{ alignItems: "center", justifyContent: "center" }}
+            >
+              <Image
+                source={require("../assets/mask_group_ek8.png")}
+                style={{
+                  width: 70,
+                  height: 70,
+                  resizeMode: "contain",
+                  padding: 10,
+                }}
+              />
+              <Text style={{ fontSize: 10, color: "black" }}>
+                Số liệu chi tiết tại Việt Nam
+              </Text>
+            </TouchableOpacity>
+          </Card>
+
+          <Card style={styles.tab}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("KhaiBaoYTe");
+              }}
+              style={{ alignItems: "center", justifyContent: "center" }}
+            >
+              <Image
+                source={require("../assets/mask_group_ek9.png")}
+                style={{
+                  width: 70,
+                  height: 70,
+                  resizeMode: "contain",
+                  padding: 10,
+                }}
+              />
+
+              <Text style={{ fontSize: 10, color: "black" }}>
+                Khai Báo y tế
+              </Text>
+            </TouchableOpacity>
+          </Card>
+          <Card style={styles.tab}>
+            <Image
+              source={require("../assets/mask_group_ek10.png")}
+              style={{
+                width: 70,
+                height: 70,
+                resizeMode: "contain",
+                padding: 10,
+              }}
+            />
+            <Text style={{ fontSize: 20, color: "red" }}>number</Text>
+
+            <Text>number</Text>
+          </Card>
+          <Card style={styles.tab}>
+            <Image
+              source={require("../assets/mask_group_ek2.png")}
+              style={{
+                width: 70,
+                height: 70,
+                resizeMode: "contain",
+                padding: 10,
+              }}
+            />
+            <Text style={{ fontSize: 20, color: "red" }}>number</Text>
+
+            <Text>number</Text>
+          </Card>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

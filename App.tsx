@@ -4,7 +4,7 @@ import Login from "./components/Login";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { NativeRouter } from "react-router-native";
 import Register from "./components/Register";
-import Home from "./components/Home";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { RootStackParamList } from "./components/RootStackParamList";
@@ -21,6 +21,8 @@ import ListChat from "./components/ListChat";
 import Tracking from "./components/Tracking";
 import KhaiBaoYTe from "./components/FormKhaiBaoYte";
 import HistoryKhaiBaoYTe from "./components/HistoryKhaiBaoYTe";
+import Home from "./components/Screen/Home";
+import DataInVietNam from "./components/DataInVietNam";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -47,7 +49,7 @@ export default function App() {
           },
         })}
         tabBarOptions={{
-          activeTintColor: "tomato",
+          activeTintColor: "#563CCF",
           inactiveTintColor: "gray",
         }}
       >
@@ -76,6 +78,9 @@ export default function App() {
           <Stack.Screen name="Chat" component={Chat} />
           <Stack.Screen name="ListChat" component={ListChat} />
           <Stack.Screen name="KhaiBaoYTe" component={KhaiBaoYTe} />
+          <Stack.Screen name="Homes" component={Home} />
+          <Stack.Screen name="DataInVietNam" component={DataInVietNam} />
+
           <Stack.Screen
             name="HistoryKhaiBaoYTe"
             component={HistoryKhaiBaoYTe}

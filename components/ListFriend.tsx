@@ -70,8 +70,10 @@ export default function ListFriend() {
   // let dataUserCurrent: FirebaseAuthTypes.User;
   const navigation = useNavigation<ListFriendScreenProp>();
   const userCurrent = firebaseApp.auth().currentUser;
-  const [userDetail, setUserDetail] = useState<dataUser>({});
-  const [doctor, setDoctor] = useState<any>("");
+  const [userDetail, setUserDetail] = useState<any>({});
+  const [doctor, setDoctor] = useState<any>({});
+  const [keyAesStore, setKeyAesStore] = useState<any>(null);
+  const [keyAESFinal, setKeyAESFinal] = useState<any>(null);
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   const genKey = async () => {
@@ -207,6 +209,76 @@ export default function ListFriend() {
     doIt();
     console.log("Effect listerine");
   }, []);
+  const getKeyAesStore = async (currentUser: any, itemChoose: any) => {
+    try {
+      const keyAesStore = await AsyncStorage.getItem(
+        `keyAesStore ${currentUser.uid} to ${itemChoose.uid}`
+      );
+      if (keyAesStore !== null) {
+        // We have data!!
+        console.log(keyAesStore);
+        console.log("already key AES");
+        const action = KeyAES(keyAesStore);
+        dispatch(action);
+        setKeyAesStore(JSON.parse(keyAesStore));
+        setKeyAESFinal({
+          decryptedKey: JSON.parse(keyAesStore).key,
+          decryptedKIv: JSON.parse(keyAesStore).iv,
+        });
+      } else {
+        console.log("create key AES");
+        const key = CryptoJS.enc.Utf8.parse("0123456789abcdef");
+        console.log("====================================");
+        console.log(key);
+        console.log("====================================");
+        const iv = CryptoJS.enc.Utf8.parse("abcdef0123456789");
+        console.log("====================================");
+        console.log(iv);
+        console.log("====================================");
+        try {
+          await AsyncStorage.setItem(
+            `keyAesStore ${currentUser.uid} to ${itemChoose.uid}`,
+            JSON.stringify({ key, iv })
+          );
+        } catch (error) {
+          // Error saving data
+        }
+        const action = KeyAES(
+          JSON.stringify({
+            decryptedKey: key,
+            decryptedKIv: iv,
+          })
+        );
+        dispatch(action);
+        setKeyAESFinal({
+          decryptedKey: key,
+          decryptedKIv: iv,
+        });
+        setKeyAesStore({ key, iv });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    console.log("have data");
+    console.log({ userDetail });
+    console.log({ doctor });
+
+    if (userDetail && doctor) {
+      console.log("====================================");
+      console.log("aaaaaaaaaaaaa");
+      console.log("====================================");
+      if (doctor.isDoctored) {
+        getKeyAesStore(userDetail, doctor);
+        console.log(" doIt a");
+      }
+      // if (!itemChoose.isDoctored) {
+      //   await getKeyAesDatabase(currentUser, itemChoose);
+      //   console.log(" doIt docter");
+      // }
+    }
+  }, [userDetail, doctor]);
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
