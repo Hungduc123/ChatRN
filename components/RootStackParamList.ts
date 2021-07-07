@@ -11,4 +11,6 @@ export type RootStackParamList = {
     HistoryKhaiBaoYTe:{ id: 'latest' | 'top' } | undefined;
     Homes: undefined;
     DataInVietNam: {cakhoi:[]}|undefined;
+    
+    KhaiBaoOrChat: undefined;
     };

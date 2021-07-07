@@ -53,6 +53,9 @@ function Register() {
           // setUniqueValue(uid);
 
           setLoading(false);
+          setEmail("");
+          setPassword("");
+          setFullName("");
         });
       })
       .catch((error: any) => {

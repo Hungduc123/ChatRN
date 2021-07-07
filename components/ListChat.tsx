@@ -29,7 +29,9 @@ import { KeyAES } from "../slice/KeyAES";
 import { PublicKey } from "../slice/PublicKey";
 import { PrivateKey } from "../slice/PrivateKey";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, Fontisto } from "@expo/vector-icons";
+import _ from "lodash";
+import moment from "moment";
 
 type ListChatScreenProp = StackNavigationProp<RootStackParamList, "ListChat">;
 // const key = CryptoJS.enc.Utf8.parse("0123456789abcdef");
@@ -54,54 +56,39 @@ export default function ListChat() {
     name: "",
     profileImg: "",
     uid: "",
+    time: "",
   });
   const [allUsers, setAllUsers] = useState<dataUser[]>([]);
 
   const [dataUserCurrent, setDataUserCurrent] = useState<dataUser>();
 
   useEffect(() => {
+    let onValueChange: any;
     try {
-      firebaseApp
+      onValueChange = firebaseApp
         .database()
         .ref("/users")
         .on("value", (snapshot: any) => {
-          let users: dataUser[] = [];
+          let users: any[] = [];
           snapshot.forEach((child: any) => {
             if (userCurrent.uid !== child.val().uid) {
               users.push({
-                email: child.val().email,
-
-                name: child.val().name,
-                profileImg: child.val().profileImg,
-                uid: child.val().uid,
+                ...child.val(),
               });
             }
           });
 
-          setAllUsers(users);
+          setAllUsers(_.sortBy(users, "time").reverse());
         });
     } catch (error) {
       console.log(error);
     }
-
-    // const key = CryptoJS.enc.Utf8.parse(
-    //   Math.floor(Math.random() * 0xffffffffffffffff).toString(16)
-    // );
-
-    // const iv = CryptoJS.enc.Utf8.parse(
-    //   Math.floor(Math.random() * 0xffffffffffffffff).toString(16)
-    // );
-    // keyAES = {
-    //   key: key,
-    //   iv: iv,
-    // };
-    // const action = KeyAES(JSON.stringify(keyAES));
-    // dispatch(action);
-    // console.log("key " + JSON.stringify(keyAES)); //string
-    // console.log(JSON.parse(JSON.stringify(key))); //object
-
-    // console.log("iv"); //?
-    // console.log(iv); //?
+    return () =>
+      firebaseApp
+        .database()
+        .ref("/users")
+        .child(userCurrent.uid)
+        .off("value", onValueChange);
   }, []);
   // useEffect(() => {
   //   const doIt = async () => {
@@ -237,6 +224,11 @@ export default function ListChat() {
   const RenderItem = (props: any) => {
     return (
       <TouchableOpacity
+        style={{
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
         onPress={async () => {
           // await getUkRSA(props.it).then((tempUkReceiver) => {
           //   enCodeRSA(tempUkReceiver).then((encrypted) => {
@@ -246,24 +238,74 @@ export default function ListChat() {
 
           const action = chooseItem(props.it);
           dispatch(action);
-          navigation.navigate("Chat");
+          navigation.navigate("KhaiBaoOrChat");
         }}
       >
-        <Avatar
-          rounded
-          source={{
-            uri: props.it.profileImg,
-          }}
-        />
+        <Card style={{ width: "90%", borderRadius: 10, padding: 15 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Avatar
+              rounded
+              source={{
+                uri: props.it.profileImg,
+              }}
+            />
+            <View>
+              {props.it.newMsg ? (
+                <Text style={{ fontWeight: "bold" }}>
+                  Bạn có tin nhắn mới chưa đọc
+                </Text>
+              ) : (
+                <></>
+              )}
+            </View>
+          </View>
 
-        <Text>{props.it.name}</Text>
+          <Text>{props.it.name}</Text>
+
+          {moment(props.it.time, "MMMM Do YYYY, h:mm:ss a")
+            .startOf("minute")
+            .fromNow()
+            .includes("a few seconds" || "a minute ago") ? (
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Text style={{ color: "green" }}>Active Now</Text>
+              <Fontisto name="radio-btn-active" size={24} color="green" />
+            </View>
+          ) : (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: "#FFCC00" }}>
+                {moment(props.it.time, "MMMM Do YYYY, h:mm:ss a")
+                  .startOf("minute")
+                  .fromNow()}
+              </Text>
+              <Fontisto name="radio-btn-active" size={24} color="#FFCC00" />
+            </View>
+          )}
+        </Card>
       </TouchableOpacity>
     );
   };
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{ flex: 1 }}>
       <FlatList
-        style={{ flex: 1 }}
+        style={{ flex: 1, width: "100%" }}
         data={allUsers}
         keyExtractor={(item) => item.uid!.toString()}
         renderItem={({ item }) => <RenderItem it={item}></RenderItem>}

@@ -25,11 +25,15 @@ import { AntDesign } from "@expo/vector-icons";
 import { Card } from "native-base";
 import { DataInVietNam } from "../slice/DataInVietNam";
 import { useDispatch } from "react-redux";
+import { UpdateUser } from "../network/User";
+import firebaseApp from "../firebase/config.js";
+import moment from "moment";
 
 type TrackingScreenProp = StackNavigationProp<RootStackParamList, "ListFriend">;
 export default function Tracking() {
   const dispatch = useDispatch();
   const navigation = useNavigation<TrackingScreenProp>();
+  const currentUser = firebaseApp.auth().currentUser;
 
   const [countries, setCountries] = useState<any>([]);
   const [selectedCountryId, setSelectedCountryId] = useState<any>("");
@@ -47,6 +51,9 @@ export default function Tracking() {
       setSelectedCountryId(e);
     }
   };
+  useEffect(() => {
+    UpdateUser(currentUser.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
+  });
   useEffect(() => {
     getCountries().then((res: any) => {
       console.log({ res });
@@ -91,12 +98,6 @@ export default function Tracking() {
   }, [countries, selectedCountryId]);
   return (
     <SafeAreaView style={styles.container}>
-      <CountrySelector
-        value={selectedCountryId}
-        countries={countries}
-        handleOnChange={handleOnChange}
-      ></CountrySelector>
-
       <ScrollView style={{ flex: 1, width: "100%" }}>
         {/* 
    
@@ -147,10 +148,31 @@ export default function Tracking() {
               style={{ width: 20, height: 20 }}
             />
           </View>
-          <Image
-            source={require("../assets/background_bottom_navbar.png")}
-            style={{ width: "80%", height: "20%", left: 20 }}
-          />
+          <View
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          >
+            <ImageBackground
+              source={require("../assets/background_bottom_navbar.png")}
+              style={{
+                width: "90%",
+                height: "50%",
+              }}
+            >
+              <View
+                style={{ flexDirection: "row", justifyContent: "flex-start" }}
+              >
+                <Image
+                  source={require("../assets/vector_ek26.png")}
+                  style={{ width: 15, height: 15 }}
+                />
+                <CountrySelector
+                  value={selectedCountryId}
+                  countries={countries}
+                  handleOnChange={handleOnChange}
+                ></CountrySelector>
+              </View>
+            </ImageBackground>
+          </View>
         </ImageBackground>
         <Highlight report={report}></Highlight>
         <Summary

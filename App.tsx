@@ -23,9 +23,11 @@ import KhaiBaoYTe from "./components/FormKhaiBaoYte";
 import HistoryKhaiBaoYTe from "./components/HistoryKhaiBaoYTe";
 import Home from "./components/Screen/Home";
 import DataInVietNam from "./components/DataInVietNam";
-
+import KhaiBaoOrChat from "./components/KhaiBaoOrChat";
+import firebaseApp from "./firebase/config.js";
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
+
 export default function App() {
   function HomeStack() {
     return (
@@ -55,6 +57,7 @@ export default function App() {
       >
         <Tab.Screen name="Tracking" component={Tracking} />
         <Tab.Screen name="ListFriend" component={ListFriend} />
+
         <Tab.Screen name="Setting" component={Setting} />
       </Tab.Navigator>
     );
@@ -80,7 +83,7 @@ export default function App() {
           <Stack.Screen name="KhaiBaoYTe" component={KhaiBaoYTe} />
           <Stack.Screen name="Homes" component={Home} />
           <Stack.Screen name="DataInVietNam" component={DataInVietNam} />
-
+          <Tab.Screen name="KhaiBaoOrChat" component={KhaiBaoOrChat} />
           <Stack.Screen
             name="HistoryKhaiBaoYTe"
             component={HistoryKhaiBaoYTe}

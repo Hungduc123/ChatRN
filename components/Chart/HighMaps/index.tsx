@@ -57,21 +57,24 @@ export default function HighMaps() {
 
   // const [timeUpdate, setTimeUpdate] = useState<string>("");
   useEffect(() => {
-    getCity().then((res) => {
-      setArr(res.data.key);
-    });
-    getDetail().then((res) => {
-      setDayUpdate(
-        moment(res.data.lastUpdatedAtApify).format("MMMM Do YYYY, h:mm:ss a")
-      );
-      setDetails(res.data.detail);
-      setSoNhiem(res.data.infected);
-      setSoDangDieuTri(res.data.treated);
+    const doIt = async () => {
+      await getCity().then((res) => {
+        setArr(res.data.key);
+      });
+      await getDetail().then((res) => {
+        setDayUpdate(
+          moment(res.data.lastUpdatedAtApify).format("MMMM Do YYYY, h:mm:ss a")
+        );
+        setDetails(res.data.detail);
+        setSoNhiem(res.data.infected);
+        setSoDangDieuTri(res.data.treated);
 
-      setSoHoiPhuc(res.data.recovered);
+        setSoHoiPhuc(res.data.recovered);
 
-      setSoTuVong(res.data.deceased);
-    });
+        setSoTuVong(res.data.deceased);
+      });
+    };
+    doIt();
   }, []);
   // function exeString(text) {
   //   var textChange = "";
@@ -382,8 +385,6 @@ export default function HighMaps() {
           style={{ flex: 1 }}
           data={data}
           keyExtractor={(item) => item.name.toString()}
-          ListHeaderComponent={null}
-          ListFooterComponent={null}
           renderItem={({ item }) => (
             <Card
               style={{

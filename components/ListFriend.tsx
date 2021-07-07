@@ -30,6 +30,8 @@ import { PublicKey } from "../slice/PublicKey";
 import { PrivateKey } from "../slice/PrivateKey";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { UpdateUser } from "../network/User";
+import moment from "moment";
 
 // const key = CryptoJS.enc.Utf8.parse(
 //   Math.floor(Math.random() * 0xffffffffffffffff).toString(16)
@@ -141,7 +143,9 @@ export default function ListFriend() {
     }
   };
   /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+  useEffect(() => {
+    UpdateUser(userCurrent.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
+  });
   useEffect(() => {
     try {
       firebaseApp
@@ -224,7 +228,7 @@ export default function ListFriend() {
         console.log("already key AES");
         const action = KeyAES(keyAesStore);
         dispatch(action);
-        setKeyAesStore(JSON.parse(keyAesStore));
+        // setKeyAesStore(JSON.parse(keyAesStore));
       } else {
         console.log("create key AES");
         const key = CryptoJS.enc.Utf8.parse("0123456789abcdef");
@@ -245,8 +249,8 @@ export default function ListFriend() {
         }
         const action = KeyAES(
           JSON.stringify({
-            decryptedKey: key,
-            decryptedKIv: iv,
+            key,
+            iv,
           })
         );
         dispatch(action);
@@ -329,11 +333,11 @@ export default function ListFriend() {
 
   useEffect(() => {
     if (userDetail && doctor) {
-      console.log("====================================");
-      console.log("aaaaaaaaaaaaa");
-      console.log("====================================");
-      if (userDetail.isDoctored === false) {
+      if (!userDetail.isDoctored) {
         getKeyAesStore(userDetail, doctor);
+        console.log("====================================");
+        console.log("aaaaaaaaaaaaa");
+        console.log("====================================");
         console.log(" doIt a");
       }
     }
@@ -467,26 +471,30 @@ export default function ListFriend() {
 
           <Text>{userDetail.name}</Text>
         </Card>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("KhaiBaoYTe");
-          }}
-        >
-          <Card>
-            <Text>Khai Báo y tế</Text>
-          </Card>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            const action = chooseItem({ ...userDetail });
-            dispatch(action);
-            navigation.navigate("HistoryKhaiBaoYTe");
-          }}
-        >
-          <Card>
-            <Text>Lịch sử khai báo y tế</Text>
-          </Card>
-        </TouchableOpacity>
+        {!userDetail.isDoctored && (
+          <>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("KhaiBaoYTe");
+              }}
+            >
+              <Card>
+                <Text>Khai Báo y tế</Text>
+              </Card>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                const action = chooseItem({ ...userDetail });
+                dispatch(action);
+                navigation.navigate("HistoryKhaiBaoYTe");
+              }}
+            >
+              <Card>
+                <Text>Lịch sử khai báo y tế</Text>
+              </Card>
+            </TouchableOpacity>
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

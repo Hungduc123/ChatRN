@@ -65,6 +65,9 @@ export default function LineChart({ data, slug }) {
   }, [data, reportType, slug]);
   return (
     <View style={[styles.container, { borderRadius: 15 }]}>
+      <Card style={[styles.container, { borderRadius: 15 }]}>
+        <HighchartsReactNative styles={styles.container} options={options} />
+      </Card>
       <Card style={{ flexDirection: "row", padding: 10, borderRadius: 15 }}>
         <TouchableOpacity
           onPress={() => {
@@ -105,9 +108,6 @@ export default function LineChart({ data, slug }) {
             30 Days
           </Text>
         </TouchableOpacity>
-      </Card>
-      <Card style={[styles.container, { borderRadius: 15 }]}>
-        <HighchartsReactNative styles={styles.container} options={options} />
       </Card>
     </View>
   );

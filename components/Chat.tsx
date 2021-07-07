@@ -30,6 +30,7 @@ import CryptoJS from "crypto-js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TypeUk } from "../data/key";
 import moment from "moment";
+import { UpdateMsg, UpdateUser } from "../network/User";
 
 type ChatScreenProp = StackNavigationProp<RootStackParamList, "Chat">;
 
@@ -38,391 +39,51 @@ export default function Chat() {
   const currentUser = firebaseApp.auth().currentUser;
   const dispatch = useDispatch();
   const keyAES = useSelector((state: any) => state.KeyAES);
-
+  console.log("====================================");
+  console.log({ keyAES });
+  console.log("====================================");
   const [choose, setChoose] = useState<boolean>(false);
   const keyboardVerticalOffset = Platform.OS === "ios" ? 100 : -300;
   const [messagesText, setMessagesText] = useState<string>("");
 
   const [messages, setMessages] = useState<Array<typeMessage>>([]);
   const itemChoose = useSelector((state: any) => state.chooseItem);
-  const pk = useSelector((state: any) => state.PrivateKey);
+
   // //////////
   // const [keyAesStore, setKeyAesStore] = useState<any>(null);
   // const [keyAesEncrypted, setKeyAesEncrypted] = useState<any>(null);
   // const [ukItemChoose, setUkItemChoose] = useState<any>(null);
   const [keyAesDatabase, setKeyAesDatabase] = useState<any>(null);
-  const [keyAESFinal, setKeyAESFinal] = useState<any>(
-    keyAES ? JSON.parse(keyAES) : null
-  );
+  // const [keyAESFinal, setKeyAESFinal] = useState<any>(
+  //   keyAES ? JSON.parse(keyAES) : null
+  // );
   // const keyAESFinal = useSelector((state: any) => state.KeyAES);
-  let RSAKey = require("react-native-rsa");
-  let rsa = new RSAKey();
-  console.log("====================================");
-  console.log({ keyAES });
-  console.log("====================================");
 
   useLayoutEffect(() => {
     navigation.setOptions({
       title: itemChoose.name,
     });
   }, [navigation]);
-
-  // const getMsg = async (
-  //   currentUser: any,
-  //   itemChoose: any,
-  //   keyAESFinal: any
-  // ) => {
-  //   try {
-  //     await firebaseApp
-  //       .database()
-  //       .ref("messages")
-  //       .child(currentUser.uid)
-  //       .child(itemChoose.uid)
-  //       .on("value", (dataSnapshot: any[]) => {
-  //         let msgs: typeMessage[] = [];
-  //         console.log("====================================");
-  //         console.log({ dataSnapshot });
-  //         console.log("====================================");
-  //         dataSnapshot.forEach((child) => {
-  //           let decrypt = CryptoJS.AES.decrypt(
-  //             child.val().messene.msg,
-  //             keyAESFinal.decryptedKey,
-  //             {
-  //               iv: keyAESFinal.decryptedKIv,
-  //               mode: CryptoJS.mode.CBC,
-  //               padding: CryptoJS.pad.Pkcs7,
-  //             }
-  //           );
-  //           msgs.push({
-  //             sendBy: child.val().messene.sender,
-  //             receivedBy: child.val().messene.receiver,
-  //             msg: decrypt.toString(CryptoJS.enc.Utf8),
-  //             // msg: child.val().messene.msg,
-  //             img: child.val().messene.img,
-  //             time: child.val().messene.time,
-  //           });
-  //         });
-  //         setMessages(msgs.reverse());
-  //       });
-  //   } catch (error) {
-  //     alert(error);
-  //   }
-  // };
-  // const getKeyAesStore = async (currentUser: any, itemChoose: any) => {
-  //   try {
-  //     const keyAesStore = await AsyncStorage.getItem(
-  //       `keyAesStore ${currentUser.uid} to ${itemChoose.uid}`
-  //     );
-  //     if (keyAesStore !== null) {
-  //       // We have data!!
-  //       console.log(keyAesStore);
-  //       console.log("already key AES");
-  //       setKeyAesStore(JSON.parse(keyAesStore));
-  //       setKeyAESFinal({
-  //         decryptedKey: JSON.parse(keyAesStore).key,
-  //         decryptedKIv: JSON.parse(keyAesStore).iv,
-  //       });
-  //     } else {
-  //       console.log("create key AES");
-  //       const key = CryptoJS.enc.Utf8.parse("0123456789abcdef");
-  //       console.log("====================================");
-  //       console.log(key);
-  //       console.log("====================================");
-  //       const iv = CryptoJS.enc.Utf8.parse("abcdef0123456789");
-  //       console.log("====================================");
-  //       console.log(iv);
-  //       console.log("====================================");
-  //       try {
-  //         await AsyncStorage.setItem(
-  //           `keyAesStore ${currentUser.uid} to ${itemChoose.uid}`,
-  //           JSON.stringify({ key, iv })
-  //         );
-  //       } catch (error) {
-  //         // Error saving data
-  //       }
-
-  //       setKeyAESFinal({
-  //         decryptedKey: key,
-  //         decryptedKIv: iv,
-  //       });
-  //       setKeyAesStore({ key, iv });
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-  // const getUkRSADatabase = async (itemChoose: any) => {
-  //   let tempUkReceiver;
-  //   try {
-  //     await firebaseApp
-  //       .database()
-  //       .ref("publicKey/" + itemChoose.uid)
-  //       .once("value", async (dataSnapshot: any) => {
-  //         tempUkReceiver = { ...dataSnapshot.val() };
-  //         console.log("ukReceiver");
-  //         console.log(tempUkReceiver);
-  //         setUkItemChoose(tempUkReceiver);
-  //       });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-  // const encodeAndSendKeyAesByRsa = async (
-  //   currentUser: any,
-  //   itemChoose: any,
-  //   ukItemChoose: any,
-  //   keyAesStore: any
-  // ) => {
-  //   await rsa.setPublicString(JSON.stringify({ ...ukItemChoose }));
-
-  //   let encryptedKey = await rsa.encrypt(JSON.stringify(keyAesStore.key));
-  //   let encryptedIv = await rsa.encrypt(JSON.stringify(keyAesStore.iv));
-
-  //   console.log("====================================");
-  //   console.log("encryptedKey   " + encryptedKey);
-  //   console.log("====================================");
-  //   console.log("====================================");
-  //   console.log("encryptedIv    " + encryptedIv);
-  //   console.log("====================================");
-  //   console.log("====================================");
-
-  //   console.log({ itemChoose });
-  //   console.log("====================================");
-  //   console.log("====================================");
-  //   console.log({ ukItemChoose });
-  //   console.log("====================================");
-
-  //   ////////////////////////////////////////
-  //   ///send rsa
-
-  //   await firebaseApp
-  //     .database()
-  //     .ref("RSA/" + currentUser.uid)
-  //     .child(itemChoose.uid)
-  //     .set({
-  //       messageRSA: {
-  //         sender: currentUser.uid,
-  //         receiver: itemChoose.uid,
-  //         encryptedKey: encryptedKey,
-  //         encryptedIv: encryptedIv,
-  //       },
-  //     });
-  //   await firebaseApp
-  //     .database()
-  //     .ref("RSA/" + itemChoose.uid)
-  //     .child(currentUser.uid)
-  //     .set({
-  //       messageRSA: {
-  //         sender: currentUser.uid,
-  //         receiver: itemChoose.uid,
-  //         encryptedKey: encryptedKey,
-  //         encryptedIv: encryptedIv,
-  //       },
-  //     });
-  // };
-  // const getKeyAesDatabase = async (currentUser: any, itemChoose: any) => {
-  //   try {
-  //     await firebaseApp
-  //       .database()
-  //       .ref("RSA")
-  //       .child(currentUser.uid)
-  //       .child(itemChoose.uid)
-  //       .once("value", (dataSnapshot: any) => {
-  //         // setDatabaseEncrypted({ ...dataSnapshot.val().messageRSA });
-  //         console.log("====================================");
-  //         console.log("dataSnapshot.val().messageRSA");
-
-  //         console.log(JSON.stringify(dataSnapshot.val().messageRSA));
-  //         console.log("====================================");
-  //         setKeyAesDatabase(dataSnapshot.val().messageRSA);
-  //       });
-  //   } catch (error) {
-  //     alert(error);
-  //   }
-  // };
   // useEffect(() => {
-  //   const doIt = async () => {
-  // if (itemChoose.isDoctored) {
-  //   // setKeyAESFinal(JSON.parse(keyAES));
-  //   // setKeyAesStore(JSON.parse(keyAES));
-  //   console.log(" doIt a");
-  // }
+  //   UpdateUser(currentUser.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
+  // }, []);
+  useEffect(() => {
+    if (!itemChoose.isDoctored) {
+      UpdateMsg(itemChoose.uid, false);
+    }
+  }, []);
 
-  // if (!itemChoose.isDoctored) {
-  //   await getKeyAesDatabase(currentUser, itemChoose);
-  //   console.log(" doIt docter");
-  // }
-
-  //   };
-  //   doIt();
-  // }, [currentUser, itemChoose]);
-  // useEffect(() => {
-  //   if (keyAesStore !== null) {
-  //     getUkRSADatabase(itemChoose);
-  //   }
-  // }, [keyAesStore, itemChoose]);
-  // useEffect(() => {
-  //   if (ukItemChoose !== null && keyAesStore !== null) {
-  //     console.log({ ukItemChoose });
-  //     console.log({ keyAesStore });
-
-  //     encodeAndSendKeyAesByRsa(
-  //       currentUser,
-  //       itemChoose,
-  //       ukItemChoose,
-  //       keyAesStore
-  //     );
-  //   }
-  // }, [ukItemChoose, keyAesStore, currentUser, itemChoose]);
-  // useEffect(() => {
-  //   if (keyAesDatabase !== null) {
-  //     console.log("====================================");
-  //     console.log({ pk });
-  //     console.log("====================================");
-  //     console.log("====================================");
-  //     console.log({ keyAesDatabase });
-  //     console.log("====================================");
-
-  //     rsa.setPrivateString(JSON.stringify(pk));
-  //     const key = rsa.decrypt(keyAesDatabase.encryptedKey);
-  //     const iv = rsa.decrypt(keyAesDatabase.encryptedIv);
-
-  //     console.log("key");
-  //     console.log({ key });
-  //     console.log("iv");
-  //     console.log({ iv });
-
-  //     setKeyAESFinal({
-  //       decryptedKey: JSON.parse(key),
-  //       decryptedKIv: JSON.parse(iv),
-  //     });
-  //     // setKeyAESFinal({
-  //     //   decryptedKey: keyAESFinal.decryptedKey,
-  //     //   decryptedKIv: keyAESFinal.decryptedKey,
-  //     // });
-  //   }
-  // }, [keyAesDatabase, pk]);
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   let onValueChange: any;
   useEffect(() => {
-    if (itemChoose.isDoctored) {
+    if (keyAES !== "") {
       console.log(
         "getMsg-----------------------------------------------------------"
       );
-
-      console.log({ keyAES });
-
-      if (keyAES !== "") {
-        setKeyAESFinal(JSON.parse(keyAES));
-        // const key = JSON.parse(keyAES);
-        // console.log("====================================");
-        // console.log(
-        //   "getMsg-----------------------------------------------------------"
-        // );
-        // console.log("====================================");
-        // //  getMsg(currentUser, itemChoose, keyAESFinal);
-        // onValueChange = firebaseApp
-        //   .database()
-        //   .ref("messages")
-        //   .child(currentUser.uid)
-        //   .child(itemChoose.uid)
-        //   .on("value", (dataSnapshot: any[]) => {
-        //     let msgs: typeMessage[] = [];
-        //     console.log("====================================");
-        //     console.log({ dataSnapshot });
-        //     console.log("====================================");
-        //     dataSnapshot.forEach((child) => {
-        //       let decrypt = CryptoJS.AES.decrypt(
-        //         child.val().messene.msg,
-        //         key.key,
-        //         {
-        //           iv: key.iv,
-        //           mode: CryptoJS.mode.CBC,
-        //           padding: CryptoJS.pad.Pkcs7,
-        //         }
-        //       );
-        //       msgs.push({
-        //         sendBy: child.val().messene.sender,
-        //         receivedBy: child.val().messene.receiver,
-        //         msg: decrypt.toString(CryptoJS.enc.Utf8),
-        //         // msg: child.val().messene.msg,
-        //         img: child.val().messene.img,
-        //         time: child.val().messene.time,
-        //       });
-        //     });
-        //     setMessages(msgs.reverse());
-        //   });
-      }
-    } else {
-      try {
-        firebaseApp
-          .database()
-          .ref("RSA")
-          .child(currentUser.uid)
-          .child(itemChoose.uid)
-          .once("value", (dataSnapshot: any) => {
-            // setDatabaseEncrypted({ ...dataSnapshot.val().messageRSA });
-            console.log("====================================");
-            console.log("dataSnapshot.val().messageRSA");
-
-            console.log(JSON.stringify(dataSnapshot.val().messageRSA));
-            console.log("====================================");
-            setKeyAesDatabase(dataSnapshot.val().messageRSA);
-          });
-      } catch (error) {
-        alert(error);
-      }
-    }
-
-    return () =>
-      firebaseApp
-        .database()
-        .ref("messages")
-        .child(currentUser.uid)
-        .child(itemChoose.uid)
-        .off("value", onValueChange);
-  }, [keyAES, currentUser, itemChoose]);
-  useEffect(() => {
-    if (keyAesDatabase !== null) {
-      console.log("====================================");
-      console.log({ pk });
-      console.log("====================================");
-      console.log("====================================");
-      console.log({ keyAesDatabase });
-      console.log("====================================");
-
-      rsa.setPrivateString(JSON.stringify(pk));
-      const key = rsa.decrypt(keyAesDatabase.encryptedKey);
-      const iv = rsa.decrypt(keyAesDatabase.encryptedIv);
-
-      console.log("key");
-      console.log({ key });
-      console.log("iv");
-      console.log({ iv });
-
-      setKeyAESFinal({
-        key: JSON.parse(key),
-        iv: JSON.parse(iv),
-      });
-      // setKeyAESFinal({
-      //   decryptedKey: keyAESFinal.decryptedKey,
-      //   decryptedKIv: keyAESFinal.decryptedKey,
-      // });
-    }
-  }, [keyAesDatabase]);
-
-  useEffect(() => {
-    if (keyAESFinal !== null) {
-      console.log(
-        "getMsg-----------------------------------------------------------"
-      );
-
-      console.log("====================================");
-      console.log(
-        "getMsg-----------------------------------------------------------"
-      );
-      console.log("====================================");
+      const key = JSON.parse(keyAES);
       //  getMsg(currentUser, itemChoose, keyAESFinal);
+      console.log("====================================");
+      console.log({ key });
+      console.log("====================================");
       onValueChange = firebaseApp
         .database()
         .ref("messages")
@@ -436,9 +97,9 @@ export default function Chat() {
           dataSnapshot.forEach((child) => {
             let decrypt = CryptoJS.AES.decrypt(
               child.val().messene.msg,
-              keyAESFinal.key,
+              key.key,
               {
-                iv: keyAESFinal.iv,
+                iv: key.iv,
                 mode: CryptoJS.mode.CBC,
                 padding: CryptoJS.pad.Pkcs7,
               }
@@ -455,7 +116,14 @@ export default function Chat() {
           setMessages(msgs.reverse());
         });
     }
-  }, [keyAESFinal]);
+    return () =>
+      firebaseApp
+        .database()
+        .ref("messages")
+        .child(currentUser.uid)
+        .child(itemChoose.uid)
+        .off("value", onValueChange);
+  }, [keyAES]);
   const RenderChatBox = (props: any) => {
     let isCurrentUser = props.it.sendBy === currentUser.uid ? true : false;
     return (
@@ -502,11 +170,12 @@ export default function Chat() {
   };
   const handleSend = async () => {
     if (messagesText) {
+      let key = JSON.parse(keyAES);
       let sendData = CryptoJS.enc.Utf8.parse(messagesText);
-      console.log({ keyAESFinal });
+      console.log({ key });
 
-      let encrypted = CryptoJS.AES.encrypt(sendData, keyAESFinal.key, {
-        iv: keyAESFinal.iv,
+      let encrypted = CryptoJS.AES.encrypt(sendData, key.key, {
+        iv: key.iv,
         mode: CryptoJS.mode.CBC,
         padding: CryptoJS.pad.Pkcs7,
       });
@@ -532,6 +201,10 @@ export default function Chat() {
       )
         .then(() => {})
         .catch((err: any) => alert(err));
+      UpdateUser(currentUser.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
+      if (itemChoose.isDoctored) {
+        UpdateMsg(currentUser.uid, true);
+      }
     }
   };
   return (

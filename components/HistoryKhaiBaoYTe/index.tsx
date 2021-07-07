@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { Card } from "native-base";
 import QRCode from "react-native-qrcode-svg";
 import styles from "../../styles/styles";
-import { log } from "react-native-reanimated";
+import CryptoJS from "crypto-js";
 
 type HistoryYTeScreenProp = StackNavigationProp<
   RootStackParamList,
@@ -31,31 +31,30 @@ export default function HistoryKhaiBaoYTe(id: any) {
         .database()
         .ref("QRKhaiBaoYTe/" + `${itemChoose.uid}`)
         .on("value", async (snapshot: any) => {
+          let key = JSON.parse(keyAES);
           let arrQrKhaiBaoYte: Array<any> = [];
-
+          console.log("====================================");
+          console.log({ key });
+          console.log("====================================");
           snapshot.forEach((child: any) => {
-            arrQrKhaiBaoYte.push({
-              "Họ tên (ghi chữ IN HOA)": child.val().ten,
-              "Số hộ chiếu / CMND / CCCD": child.val().cmnd,
-              "Năm sinh": child.val().namSinh,
-              "Giới tính": child.val().gioiTinh,
-              "Quốc tịch": child.val().quocTich,
-              "Tỉnh thành": child.val().tinhThanh,
-              "Quận / huyện": child.val().quanHuyen,
-              "Phường / xã": child.val().phuongXa,
-              "Số nhà, phố, tổ dân phố/thôn/đội ": child.val().soNha,
-              time: child.val().time,
+            let decrypt = CryptoJS.AES.decrypt(child.val(), key.key, {
+              iv: key.iv,
+              mode: CryptoJS.mode.CBC,
+              padding: CryptoJS.pad.Pkcs7,
             });
-          });
-          //   snapshot.forEach((child: any) => {
-          //     console.log({ child });
 
-          //     arrQrKhaiBaoYte.push({ ...child.val() });
-          //   });
-          // setUserDetail(currentUser);
+            arrQrKhaiBaoYte.push(
+              JSON.parse(decrypt.toString(CryptoJS.enc.Utf8))
+            );
+            console.log("====================================");
+            console.log(decrypt.toString(CryptoJS.enc.Utf8));
+            console.log("====================================");
+          });
+
           console.log("====================================");
           console.log({ arrQrKhaiBaoYte });
           console.log("====================================");
+
           setData(arrQrKhaiBaoYte);
         });
     } catch (error) {
@@ -69,7 +68,7 @@ export default function HistoryKhaiBaoYTe(id: any) {
   }, []);
   return (
     <View style={styles.container}>
-      <Text>Lịch sử khai báo y tế {itemChoose.uid} </Text>
+      <Text>Lịch sử khai báo y tế của {itemChoose.name} </Text>
       <FlatList
         style={{ flex: 1 }}
         data={data}

@@ -8,5 +8,6 @@ interface dataUser {
   uk?: string;
   pk?: string;
   isDoctored?: boolean;
+  time: string;
 }
 export default dataUser;
