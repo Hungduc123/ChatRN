@@ -69,3 +69,21 @@ export const UpdateMsg = async (uuid: string, newMsg: boolean) => {
     return error;
   }
 };
+export const notification = async (
+  uuid: string,
+  notification: string,
+  uid: any
+) => {
+  try {
+    return await firebaseApp
+      .database()
+      .ref("Notification/" + uuid)
+      .push({
+        notification,
+        time: moment().format("MMMM Do YYYY, h:mm:ss a"),
+        Sender: uid,
+      });
+  } catch (error) {
+    return error;
+  }
+};

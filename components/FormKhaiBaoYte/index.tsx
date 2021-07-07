@@ -20,6 +20,7 @@ import moment from "moment";
 import firebaseApp from "../../firebase/config.js";
 import { useSelector } from "react-redux";
 import CryptoJS from "crypto-js";
+import { notification } from "../../network/User";
 
 type FormKhaiBaoYTeScreenProp = StackNavigationProp<
   RootStackParamList,
@@ -29,7 +30,8 @@ type FormKhaiBaoYTeScreenProp = StackNavigationProp<
 export default function FormKhaiBaoYte() {
   const currentUser = firebaseApp.auth().currentUser;
   const keyAES = useSelector((state: any) => state.KeyAES);
-
+  const itemChoose = useSelector((state: any) => state.chooseItem);
+  const userStore = useSelector((state: any) => state.UserStore);
   const navigation = useNavigation<FormKhaiBaoYTeScreenProp>();
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -107,6 +109,7 @@ export default function FormKhaiBaoYte() {
       ...data,
       time: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
+    notification(itemChoose.uid, "Khai báo y tế", userStore);
     alert("Khai báo thành công ");
     console.log(data);
   };

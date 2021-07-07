@@ -6,6 +6,7 @@ import PublicKeyReducer from "./slice/PublicKey";
 import KeyAESReducer from "./slice/KeyAES";
 import AccountDoctorLoginReducer from "./slice/accountDoctor";
 import DataInVietNamReducer from "./slice/DataInVietNam";
+import UserStoreReducer from "./slice/UserStore";
 const rootReducer = {
   chooseItem: chooseItemReducer,
   CurrentUser: CurrentUserReducer,
@@ -14,6 +15,7 @@ const rootReducer = {
   KeyAES: KeyAESReducer,
   AccountDoctorLogin: AccountDoctorLoginReducer,
   DataInVietNam: DataInVietNamReducer,
+  UserStore: UserStoreReducer,
 };
 const store = configureStore({
   reducer: rootReducer,

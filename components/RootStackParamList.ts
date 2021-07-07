@@ -13,4 +13,5 @@ export type RootStackParamList = {
     DataInVietNam: {cakhoi:[]}|undefined;
     
     KhaiBaoOrChat: undefined;
+    Notification: undefined;
     };

@@ -4,11 +4,11 @@ import dataUser from "../data/dataUser";
 // var data:dataItem
 const data: any = {};
 const slice = createSlice({
-  name: "chooseItem",
+  name: "UserStore",
   initialState: data,
 
   reducers: {
-    chooseItem: (state, action) => {
+    UserStore: (state, action) => {
       state = {
         ...action.payload,
       };
@@ -17,5 +17,5 @@ const slice = createSlice({
   },
 });
 const { reducer, actions } = slice;
-export const { chooseItem } = actions;
+export const { UserStore } = actions;
 export default reducer;

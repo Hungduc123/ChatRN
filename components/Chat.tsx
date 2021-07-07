@@ -30,7 +30,7 @@ import CryptoJS from "crypto-js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TypeUk } from "../data/key";
 import moment from "moment";
-import { UpdateMsg, UpdateUser } from "../network/User";
+import { notification, UpdateMsg } from "../network/User";
 
 type ChatScreenProp = StackNavigationProp<RootStackParamList, "Chat">;
 
@@ -48,7 +48,7 @@ export default function Chat() {
 
   const [messages, setMessages] = useState<Array<typeMessage>>([]);
   const itemChoose = useSelector((state: any) => state.chooseItem);
-
+  const userState = useSelector((state: any) => state.UserStore);
   // //////////
   // const [keyAesStore, setKeyAesStore] = useState<any>(null);
   // const [keyAesEncrypted, setKeyAesEncrypted] = useState<any>(null);
@@ -72,6 +72,9 @@ export default function Chat() {
       UpdateMsg(itemChoose.uid, false);
     }
   }, []);
+  // useEffect(() => {
+  //   UpdateUser(currentUser.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
+  // });
 
   let onValueChange: any;
   useEffect(() => {
@@ -201,10 +204,11 @@ export default function Chat() {
       )
         .then(() => {})
         .catch((err: any) => alert(err));
-      UpdateUser(currentUser.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
+      // UpdateUser(currentUser.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
       if (itemChoose.isDoctored) {
         UpdateMsg(currentUser.uid, true);
       }
+      notification(itemChoose.uid, "Bạn có 1 tin nhắn mới", userState);
     }
   };
   return (

@@ -24,6 +24,8 @@ import HistoryKhaiBaoYTe from "./components/HistoryKhaiBaoYTe";
 import Home from "./components/Screen/Home";
 import DataInVietNam from "./components/DataInVietNam";
 import KhaiBaoOrChat from "./components/KhaiBaoOrChat";
+import Notification from "./components/Notification";
+
 import firebaseApp from "./firebase/config.js";
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -55,10 +57,11 @@ export default function App() {
           inactiveTintColor: "gray",
         }}
       >
-        <Tab.Screen name="Tracking" component={Tracking} />
         <Tab.Screen name="ListFriend" component={ListFriend} />
+        <Tab.Screen name="Tracking" component={Tracking} />
 
         <Tab.Screen name="Setting" component={Setting} />
+        <Tab.Screen name="Notification" component={Notification} />
       </Tab.Navigator>
     );
   }

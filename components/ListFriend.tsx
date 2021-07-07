@@ -32,6 +32,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { UpdateUser } from "../network/User";
 import moment from "moment";
+import { UserStore } from "../slice/UserStore";
 
 // const key = CryptoJS.enc.Utf8.parse(
 //   Math.floor(Math.random() * 0xffffffffffffffff).toString(16)
@@ -152,7 +153,7 @@ export default function ListFriend() {
         .database()
         .ref("/users")
         .on("value", async (snapshot: any) => {
-          let currentUser: dataUser = {
+          let currentUser: any = {
             isDoctored: false,
             email: "",
             name: "",
@@ -169,8 +170,13 @@ export default function ListFriend() {
               currentUser.isDoctored = child.val().isDoctored;
             } else if (child.val().name === "Doctor") {
               setDoctor(child.val());
+              let currentUser = { ...child.val() };
+              const action = chooseItem(currentUser);
+              dispatch(action);
             }
           });
+          const action = UserStore(currentUser);
+          dispatch(action);
           setUserDetail(currentUser);
         });
     } catch (error) {
@@ -356,84 +362,6 @@ export default function ListFriend() {
     }
   }, [ukItemChoose, keyAesStore, userDetail, doctor]);
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // async function pickImage(uid: string) {
-  //   let result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //     allowsEditing: true,
-  //     aspect: [1, 1],
-  //     quality: 1,
-  //   });
-
-  //   console.log(result);
-
-  //   if (!result.cancelled) {
-  //     setUserDetail({
-  //       ...userDetail,
-  //       profileImg: result.uri,
-  //     });
-
-  //     UpdateUser(uid, result.uri)
-  //       .then(() => {
-  //         // setUserDetail({
-  //         //   ...userDetail,
-  //         //   profileImg: result.uri,
-  //         // });
-  //       })
-  //       .catch((err: any) => {
-  //         alert(err);
-  //       });
-  //   }
-  // }
-  // const changeAvatar = (uid: string) => {
-
-  //   ImagePicker.showImagePicker(options, (response: any) => {
-  //     console.log("Response = ", response);
-
-  //       // Base 64 image:
-  //       let source = "data:image/jpeg;base64," + response.data;
-
-  //       UpdateUser(uid, source)
-  //         .then(() => {
-  //           setUserDetail({
-  //             ...userDetail,
-  //             profileImg: source,
-  //           });
-  //         })
-  //         .catch((err: any) => {
-  //           alert(err);
-  //         });
-
-  // };
-
-  // const RenderItem = (props: any) => {
-  //   return (
-  //     <TouchableOpacity
-  //       onPress={async () => {
-  //         // await getUkRSA(props.it).then((tempUkReceiver) => {
-  //         //   enCodeRSA(tempUkReceiver).then((encrypted) => {
-  //         //     sendRSA(encrypted, props.it);
-  //         //   });
-  //         // });
-
-  //         const action = chooseItem(props.it);
-  //         dispatch(action);
-  //         navigation.navigate("Chat");
-  //       }}
-  //     >
-  //       <Avatar
-  //         rounded
-  //         source={{
-  //           uri: props.it.profileImg,
-  //         }}
-  //       />
-
-  //       <Text>{props.it.name}</Text>
-  //     </TouchableOpacity>
-  //   );
-  // };
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={{ flex: 1, width: "100%" }}>
@@ -470,6 +398,9 @@ export default function ListFriend() {
           </TouchableOpacity>
 
           <Text>{userDetail.name}</Text>
+          <Text>{userDetail.email}</Text>
+
+          <Text>{userDetail.isDoctored ? "Admin" : "User"}</Text>
         </Card>
         {!userDetail.isDoctored && (
           <>

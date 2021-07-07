@@ -13,6 +13,7 @@ export default function CountrySelector({ countries, handleOnChange, value }) {
   return (
     <View style={{ alignItems: "center", justifyContent: "center" }}>
       <RNPickerSelect
+        style={{ color: "black" }}
         useNativeAndroidPickerStyle={false}
         // onChange={(value) => {
         //   handleOnChange(value);

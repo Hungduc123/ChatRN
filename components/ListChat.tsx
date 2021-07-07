@@ -84,11 +84,7 @@ export default function ListChat() {
       console.log(error);
     }
     return () =>
-      firebaseApp
-        .database()
-        .ref("/users")
-        .child(userCurrent.uid)
-        .off("value", onValueChange);
+      firebaseApp.database().ref("/users").off("value", onValueChange);
   }, []);
   // useEffect(() => {
   //   const doIt = async () => {
@@ -271,7 +267,11 @@ export default function ListChat() {
           {moment(props.it.time, "MMMM Do YYYY, h:mm:ss a")
             .startOf("minute")
             .fromNow()
-            .includes("a few seconds" || "a minute ago") ? (
+            .includes("seconds") ||
+          moment(props.it.time, "MMMM Do YYYY, h:mm:ss a")
+            .startOf("minute")
+            .fromNow()
+            .includes("a minute ago") ? (
             <View
               style={{
                 flexDirection: "row",
