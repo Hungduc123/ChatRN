@@ -14,4 +14,5 @@ export type RootStackParamList = {
     
     KhaiBaoOrChat: undefined;
     Notification: undefined;
+    Test: undefined;
     };

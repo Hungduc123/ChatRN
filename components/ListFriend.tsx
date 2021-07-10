@@ -30,9 +30,9 @@ import { PublicKey } from "../slice/PublicKey";
 import { PrivateKey } from "../slice/PrivateKey";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { UpdateUser } from "../network/User";
 import moment from "moment";
 import { UserStore } from "../slice/UserStore";
+import { UpdateUser } from "../network/User";
 
 // const key = CryptoJS.enc.Utf8.parse(
 //   Math.floor(Math.random() * 0xffffffffffffffff).toString(16)
@@ -146,7 +146,7 @@ export default function ListFriend() {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
     UpdateUser(userCurrent.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
-  });
+  }, []);
   useEffect(() => {
     try {
       firebaseApp

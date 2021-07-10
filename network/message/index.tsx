@@ -5,7 +5,8 @@ export const senderMsg = async (
   currentUserId: string,
   guestUserId: string,
   img: string,
-  time: string
+  time: string,
+  type: string
 ) => {
   try {
     return await firebaseApp
@@ -19,6 +20,7 @@ export const senderMsg = async (
           msg: msgValue,
           img: img,
           time: time,
+          type: type,
         },
       });
   } catch (error) {
@@ -31,7 +33,8 @@ export const receiverMsg = async (
   currentUserId: string,
   guestUserId: string,
   img: string,
-  time: string
+  time: string,
+  type: string
 ) => {
   try {
     return await firebaseApp
@@ -45,6 +48,7 @@ export const receiverMsg = async (
           msg: msgValue,
           img: img,
           time: time,
+          type: type,
         },
       });
   } catch (error) {

@@ -82,6 +82,7 @@ export const notification = async (
         notification,
         time: moment().format("MMMM Do YYYY, h:mm:ss a"),
         Sender: uid,
+        seen: false,
       });
   } catch (error) {
     return error;

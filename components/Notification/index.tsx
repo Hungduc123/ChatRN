@@ -16,6 +16,7 @@ import { chooseItem } from "../../slice/chooseItem";
 import { Card } from "native-base";
 import { Entypo, Feather } from "@expo/vector-icons";
 import firebase from "firebase";
+import { useDispatch, useSelector } from "react-redux";
 type NotificationScreenProp = StackNavigationProp<
   RootStackParamList,
   "Notification"
@@ -25,6 +26,8 @@ export default function Notification() {
   const navigation = useNavigation<NotificationScreenProp>();
   const userCurrent = firebaseApp.auth().currentUser;
   const [allNotifications, setAllNotifications] = useState<any>([]);
+  const dispatch = useDispatch();
+  const userStore = useSelector((state: any) => state.UserStore);
   useEffect(() => {
     let onValueChange: any;
     try {
@@ -63,16 +66,26 @@ export default function Notification() {
           alignItems: "center",
           justifyContent: "center",
         }}
-        onPress={async () => {
-          // await getUkRSA(props.it).then((tempUkReceiver) => {
-          //   enCodeRSA(tempUkReceiver).then((encrypted) => {
-          //     sendRSA(encrypted, props.it);
-          //   });
-          // });
+        onPress={() => {
+          // const a = JSON.parse(props.it);
 
-          const action = chooseItem(props.it.Sender);
+          const action = chooseItem({ ...props.it.Sender });
           dispatch(action);
-          navigation.navigate("KhaiBaoOrChat");
+          if (props.it.notification === "Bạn có 1 tin nhắn mới") {
+            navigation.navigate("Chat");
+          } else {
+            navigation.navigate("HistoryKhaiBaoYTe");
+          }
+          // const temp = { ...props.it, seen: true };
+          // for (var i in allNotifications) {
+          //   if (allNotifications[i].time === props.it.time) {
+          //     allNotifications[i].seen = true;
+          //   }
+          // }
+          // firebaseApp
+          //   .database()
+          //   .ref("Notification/" + userStore.uid)
+          //   .update(allNotifications);
         }}
       >
         <Card style={{ width: "90%", borderRadius: 10, padding: 15 }}>
@@ -84,10 +97,12 @@ export default function Notification() {
             }}
           >
             <View>
-              <Text>
+              <Text style={{ fontWeight: !props.it.seen ? "bold" : "400" }}>
                 {props.it.notification} từ {props.it.Sender.name}
               </Text>
-              <Text>vào {props.it.time}</Text>
+              <Text style={{ fontWeight: !props.it.seen ? "bold" : "400" }}>
+                vào {props.it.time}
+              </Text>
             </View>
           </View>
         </Card>
@@ -124,7 +139,4 @@ export default function Notification() {
       ></FlatList>
     </SafeAreaView>
   );
-}
-function dispatch(action: { payload: any; type: string }) {
-  throw new Error("Function not implemented.");
 }

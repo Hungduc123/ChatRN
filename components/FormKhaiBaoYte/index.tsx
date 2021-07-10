@@ -9,6 +9,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Modal,
+  SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import Constants from "expo-constants";
@@ -21,6 +24,9 @@ import firebaseApp from "../../firebase/config.js";
 import { useSelector } from "react-redux";
 import CryptoJS from "crypto-js";
 import { notification } from "../../network/User";
+import { Card } from "native-base";
+import colors from "../../colors/colors";
+import { AntDesign } from "@expo/vector-icons";
 
 type FormKhaiBaoYTeScreenProp = StackNavigationProp<
   RootStackParamList,
@@ -103,15 +109,21 @@ export default function FormKhaiBaoYte() {
     //   console.log(error);
     // }
   };
-  const onSubmit = async (data: any) => {
+  const onSubmit = (data: any) => {
     setData({ ...data, time: moment().format("MMMM Do YYYY, h:mm:ss a") });
-    await pushQrKhaiBaoYTe({
-      ...data,
-      time: moment().format("MMMM Do YYYY, h:mm:ss a"),
+
+    reset({
+      "Họ tên (ghi chữ IN HOA)": "",
+      "Số hộ chiếu / CMND / CCCD": "",
+      "Năm sinh": "",
+      "Giới tính": "",
+      "Quốc tịch": "",
+      "Tỉnh thành": "",
+      "Quận / huyện": "",
+      "Phường / xã": "",
+      "Số nhà, phố, tổ dân phố/thôn/đội ": "",
     });
-    notification(itemChoose.uid, "Khai báo y tế", userStore);
-    alert("Khai báo thành công ");
-    console.log(data);
+    console.log({ data });
   };
 
   const onChange = (arg: any) => {
@@ -127,7 +139,78 @@ export default function FormKhaiBaoYte() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-      {data && <QRCode value={JSON.stringify(data)} />}
+      {data !== null && (
+        <Modal
+          animationType="slide"
+          visible={data !== null}
+          style={{ alignItems: "center", justifyContent: "space-between" }}
+        >
+          <SafeAreaView
+            style={{
+              flex: 1,
+              justifyContent: "space-around",
+              alignItems: "center",
+            }}
+          >
+            <Card
+              style={{
+                flex: 1,
+                justifyContent: "space-around",
+                alignItems: "center",
+                borderRadius: 20,
+                shadowColor: colors.first,
+                width: "90%",
+              }}
+            >
+              <TouchableOpacity onPress={() => setData(null)}>
+                <AntDesign name="back" size={24} color={colors.first} />
+              </TouchableOpacity>
+              <Text style={{ color: colors.first, fontSize: 30 }}>
+                Kết Quả Khai Báo Y Tế{" "}
+              </Text>
+              <QRCode value={JSON.stringify(data)} />
+
+              <Text>Họ tên: {data["Họ tên (ghi chữ IN HOA)"]}</Text>
+              <Text>
+                Số hộ chiếu / CMND / CCCD: {data["Số hộ chiếu / CMND / CCCD"]}
+              </Text>
+              <Text>Năm sinh: {data["Năm sinh"]}</Text>
+              <Text>Giới tính: {data["Giới tính"]}</Text>
+              <Text>Quốc tịch: {data["Quốc tịch"]}</Text>
+              <Text>Tỉnh thành: {data["Tỉnh thành"]}</Text>
+              <Text>Quận / huyện: {data["Quận / huyện"]}</Text>
+              <Text>Phường / xã: {data["Phường / xã"]}</Text>
+              <Text>
+                Số nhà, phố, tổ dân phố/thôn/đội:{" "}
+                {data["Số nhà, phố, tổ dân phố/thôn/đội "]}
+              </Text>
+              <TouchableOpacity
+                onPress={async () => {
+                  await pushQrKhaiBaoYTe({
+                    ...data,
+                  });
+                  notification(itemChoose.uid, "Khai báo y tế", userStore);
+                  alert("Khai báo y tế thành công");
+                  setData(null);
+                }}
+              >
+                <View
+                  style={{
+                    height: 50,
+                    width: 100,
+                    backgroundColor: colors.first,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 15,
+                  }}
+                >
+                  <Text>SUBMIT</Text>
+                </View>
+              </TouchableOpacity>
+            </Card>
+          </SafeAreaView>
+        </Modal>
+      )}
       <ScrollView style={{ flex: 1, width: "100%" }}>
         <Text style={styles.label}>Họ tên (ghi chữ IN HOA)</Text>
         <Controller
@@ -141,8 +224,13 @@ export default function FormKhaiBaoYte() {
             />
           )}
           name="Họ tên (ghi chữ IN HOA)"
+          defaultValue=""
           rules={{ required: true }}
         />
+        {errors["Họ tên (ghi chữ IN HOA)"] && (
+          <Text style={{ color: "red" }}>This is required.</Text>
+        )}
+
         <Text style={styles.label}>Số hộ chiếu / CMND / CCCD</Text>
         <Controller
           control={control}
@@ -157,6 +245,9 @@ export default function FormKhaiBaoYte() {
           name="Số hộ chiếu / CMND / CCCD"
           rules={{ required: true }}
         />
+        {errors["Số hộ chiếu / CMND / CCCD"] && (
+          <Text style={{ color: "red" }}>This is required.</Text>
+        )}
         <Text style={styles.label}>Năm sinh</Text>
 
         <Controller
@@ -172,6 +263,9 @@ export default function FormKhaiBaoYte() {
           name="Năm sinh"
           rules={{ required: true }}
         />
+        {errors["Năm sinh"] && (
+          <Text style={{ color: "red" }}>This is required.</Text>
+        )}
         <Text style={styles.label}>Giới tính</Text>
 
         <Controller
@@ -187,6 +281,9 @@ export default function FormKhaiBaoYte() {
           name="Giới tính"
           rules={{ required: true }}
         />
+        {errors["Giới tính"] && (
+          <Text style={{ color: "red" }}>This is required.</Text>
+        )}
         <Text style={styles.label}>Quốc tịch</Text>
 
         <Controller
@@ -202,6 +299,9 @@ export default function FormKhaiBaoYte() {
           name="Quốc tịch"
           rules={{ required: true }}
         />
+        {errors["Quốc tịch"] && (
+          <Text style={{ color: "red" }}>This is required.</Text>
+        )}
         <Text style={styles.label}>Địa chỉ liên lạc tại Việt Nam</Text>
         <Text style={styles.label}>Tỉnh thành/ Thành phố</Text>
 
@@ -218,6 +318,9 @@ export default function FormKhaiBaoYte() {
           name="Tỉnh thành"
           rules={{ required: true }}
         />
+        {errors["Tỉnh thành"] && (
+          <Text style={{ color: "red" }}>This is required.</Text>
+        )}
         <Text style={styles.label}>Quận / huyện</Text>
 
         <Controller
@@ -233,6 +336,9 @@ export default function FormKhaiBaoYte() {
           name="Quận / huyện"
           rules={{ required: true }}
         />
+        {errors["Quận / huyện"] && (
+          <Text style={{ color: "red" }}>This is required.</Text>
+        )}
         <Text style={styles.label}>Phường / xã</Text>
 
         <Controller
@@ -248,6 +354,9 @@ export default function FormKhaiBaoYte() {
           name="Phường / xã"
           rules={{ required: true }}
         />
+        {errors["Phường / xã"] && (
+          <Text style={{ color: "red" }}>This is required.</Text>
+        )}
         <Text style={styles.label}>Số nhà, phố, tổ dân phố/thôn/đội </Text>
 
         <Controller
@@ -263,6 +372,9 @@ export default function FormKhaiBaoYte() {
           name="Số nhà, phố, tổ dân phố/thôn/đội "
           rules={{ required: true }}
         />
+        {errors["Số nhà, phố, tổ dân phố/thôn/đội "] && (
+          <Text style={{ color: "red" }}>This is required.</Text>
+        )}
         <Text>
           Trong vòng 14 ngày qua, Anh/Chị có đến tỉnh/thành phố, quốc gia/vùng
           lãnh thổ nào (Có thể đi qua nhiều nơi)

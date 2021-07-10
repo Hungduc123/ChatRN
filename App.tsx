@@ -27,6 +27,7 @@ import KhaiBaoOrChat from "./components/KhaiBaoOrChat";
 import Notification from "./components/Notification";
 
 import firebaseApp from "./firebase/config.js";
+import Test from "./components/Test";
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
@@ -70,6 +71,8 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen name="Test" component={Test} />
+
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Register" component={Register} />
           <Stack.Screen

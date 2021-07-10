@@ -2,6 +2,8 @@ import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Card, Textarea } from "native-base";
+import * as ImageManipulator from "expo-image-manipulator";
+import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   View,
@@ -14,6 +16,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   NativeModules,
+  Image,
 } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -30,7 +33,8 @@ import CryptoJS from "crypto-js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TypeUk } from "../data/key";
 import moment from "moment";
-import { notification, UpdateMsg } from "../network/User";
+import { notification, UpdateMsg, UpdateUser } from "../network/User";
+import { Controller, useForm } from "react-hook-form";
 
 type ChatScreenProp = StackNavigationProp<RootStackParamList, "Chat">;
 
@@ -58,7 +62,18 @@ export default function Chat() {
   //   keyAES ? JSON.parse(keyAES) : null
   // );
   // const keyAESFinal = useSelector((state: any) => state.KeyAES);
-
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      sms: "",
+    },
+  });
   useLayoutEffect(() => {
     navigation.setOptions({
       title: itemChoose.name,
@@ -71,6 +86,9 @@ export default function Chat() {
     if (!itemChoose.isDoctored) {
       UpdateMsg(itemChoose.uid, false);
     }
+  }, []);
+  useEffect(() => {
+    UpdateUser(currentUser.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
   }, []);
   // useEffect(() => {
   //   UpdateUser(currentUser.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
@@ -93,7 +111,7 @@ export default function Chat() {
         .child(currentUser.uid)
         .child(itemChoose.uid)
         .on("value", (dataSnapshot: any[]) => {
-          let msgs: typeMessage[] = [];
+          let msgs: any[] = [];
           console.log("====================================");
           console.log({ dataSnapshot });
           console.log("====================================");
@@ -114,6 +132,7 @@ export default function Chat() {
               // msg: child.val().messene.msg,
               img: child.val().messene.img,
               time: child.val().messene.time,
+              type: child.val().messene.type,
             });
           });
           setMessages(msgs.reverse());
@@ -160,8 +179,14 @@ export default function Chat() {
                 }}
               />
             )}
-
-            <Text style={{ padding: 10, fontSize: 20 }}>{props.it.msg}</Text>
+            {props.it.type === "sms" ? (
+              <Text style={{ padding: 10, fontSize: 20 }}>{props.it.msg}</Text>
+            ) : (
+              <Image
+                style={{ width: 300, height: 300 }}
+                source={{ uri: `data:image/jpeg;base64,${props.it.msg}` }}
+              />
+            )}
           </View>
 
           {choose && (
@@ -171,7 +196,7 @@ export default function Chat() {
       </TouchableWithoutFeedback>
     );
   };
-  const handleSend = async () => {
+  const handleSend = (messagesText: string, type: string) => {
     if (messagesText) {
       let key = JSON.parse(keyAES);
       let sendData = CryptoJS.enc.Utf8.parse(messagesText);
@@ -189,7 +214,8 @@ export default function Chat() {
         currentUser.uid,
         itemChoose.uid,
         "",
-        moment().format("MMMM Do YYYY, h:mm:ss a")
+        moment().format("MMMM Do YYYY, h:mm:ss a"),
+        type
       )
         .then(() => {
           setMessagesText("");
@@ -200,16 +226,52 @@ export default function Chat() {
         currentUser.uid,
         itemChoose.uid,
         "",
-        moment().format("MMMM Do YYYY, h:mm:ss a")
+        moment().format("MMMM Do YYYY, h:mm:ss a"),
+        type
       )
         .then(() => {})
         .catch((err: any) => alert(err));
-      // UpdateUser(currentUser.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
+
       if (itemChoose.isDoctored) {
         UpdateMsg(currentUser.uid, true);
       }
       notification(itemChoose.uid, "Bạn có 1 tin nhắn mới", userState);
+      UpdateUser(currentUser.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
+      reset({
+        sms: "",
+      });
     }
+  };
+  const onSubmit = (data: any) => {
+    console.log({ data });
+
+    handleSend(data.sms, "sms");
+  };
+  const openImagePickerAsync = async () => {
+    let permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("Permission to access camera roll is required!");
+      return;
+    }
+
+    let pickerResult: any = await ImagePicker.launchImageLibraryAsync();
+    console.log({ pickerResult });
+    console.log(pickerResult.uri);
+    // setPicture(pickerResult);
+    const manipResult: any = await ImageManipulator.manipulateAsync(
+      pickerResult.uri,
+      [{ resize: { width: 200, height: 200 } }],
+      { compress: 1, format: ImageManipulator.SaveFormat.PNG, base64: true }
+    );
+    ///////////////
+    ////
+    console.log("====================================");
+    console.log({ manipResult });
+    console.log("====================================");
+    handleSend(manipResult.base64, "picture");
+    // setPicture(manipResult);
   };
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -226,6 +288,7 @@ export default function Chat() {
             keyExtractor={(item) => JSON.stringify(item)}
             renderItem={({ item }) => <RenderChatBox it={item} />}
           />
+
           <View
             style={{
               justifyContent: "space-around",
@@ -233,22 +296,43 @@ export default function Chat() {
               alignItems: "center",
             }}
           >
-            <Textarea
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={[styles.input, { width: "70%", padding: 10 }]}
+                  onBlur={onBlur}
+                  onChangeText={(value) => onChange(value)}
+                  value={value}
+                />
+              )}
+              name="sms"
+              defaultValue=""
+              rules={{ required: true }}
+            />
+            {/* <Textarea
               onChangeText={(Value) => setMessagesText(Value)}
               style={[styles.input, { width: "70%" }]}
               value={messagesText}
               placeholderTextColor={colors.first}
               placeholder="type here..."
               rowSpan={2}
-            />
+            /> */}
             <View style={{ flexDirection: "row" }}>
-              <FontAwesome5
-                style={{ paddingRight: 10 }}
-                name="camera"
-                size={30}
-                color={colors.first}
-              />
-              <TouchableOpacity onPress={handleSend}>
+              <TouchableOpacity
+                onPress={() => {
+                  openImagePickerAsync();
+                }}
+              >
+                <FontAwesome5
+                  style={{ paddingRight: 10 }}
+                  name="camera"
+                  size={30}
+                  color={colors.first}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={handleSubmit(onSubmit)}>
                 <Feather
                   style={{ paddingRight: 10 }}
                   name="send"

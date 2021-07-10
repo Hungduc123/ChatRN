@@ -13,6 +13,7 @@ export default function CountrySelector({ countries, handleOnChange, value }) {
   return (
     <View style={{ alignItems: "center", justifyContent: "center" }}>
       <RNPickerSelect
+        placeholder={{}}
         style={{ color: "black" }}
         useNativeAndroidPickerStyle={false}
         // onChange={(value) => {
@@ -26,6 +27,7 @@ export default function CountrySelector({ countries, handleOnChange, value }) {
           // console.log(value)}
         }
         items={it}
+        InputAccessoryView={() => null}
       />
     </View>
   );

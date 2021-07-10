@@ -25,9 +25,9 @@ import { AntDesign } from "@expo/vector-icons";
 import { Card } from "native-base";
 import { DataInVietNam } from "../slice/DataInVietNam";
 import { useDispatch } from "react-redux";
-import { UpdateUser } from "../network/User";
 import firebaseApp from "../firebase/config.js";
 import moment from "moment";
+import { UpdateUser } from "../network/User";
 
 type TrackingScreenProp = StackNavigationProp<RootStackParamList, "ListFriend">;
 export default function Tracking() {
@@ -53,7 +53,7 @@ export default function Tracking() {
   };
   useEffect(() => {
     UpdateUser(currentUser.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
-  });
+  }, []);
   useEffect(() => {
     getCountries().then((res: any) => {
       console.log({ res });
@@ -101,29 +101,24 @@ export default function Tracking() {
       <ScrollView style={{ flex: 1, width: "100%" }}>
         {/* 
    
-
         <Highlight report={report}></Highlight>
-
         <View style={{ flexDirection: "row" }}>
           <LineChartMini
             colorLineChart={"green"}
             data={cakhoi}
             titleTable="Ca Khỏi"
           ></LineChartMini>
-
           <LineChartMini
             colorLineChart={"red"}
             data={canhiem}
             titleTable="Ca nhiễm"
           ></LineChartMini>
-
           <LineChartMini
             colorLineChart={"gray"}
             data={catuvong}
             titleTable="Ca tử vong"
           ></LineChartMini>
         </View>
-
         <HighMaps></HighMaps> */}
         <ImageBackground
           source={require("../assets/background_header.png")}

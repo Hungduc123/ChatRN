@@ -13,8 +13,9 @@ import { RootStackParamList } from "./RootStackParamList";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UpdateUser } from "../network/User";
+
 import moment from "moment";
+import { UpdateUser } from "../network/User";
 
 type HomeScreenProp = StackNavigationProp<RootStackParamList, "Register">;
 
@@ -27,7 +28,7 @@ export default function Setting() {
   const key = useSelector((state: any) => state.PublicKey);
   useEffect(() => {
     UpdateUser(currentUser.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
-  });
+  }, []);
   return (
     <SafeAreaView style={styles.container}>
       <Text>setting</Text>
