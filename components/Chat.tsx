@@ -28,7 +28,8 @@ import firebaseApp from "../firebase/config.js";
 import typeMessage from "../data/typeMessage";
 // import userCurrent from "../network/userCurrent";
 import { receiverMsg, senderMsg } from "../network/message";
-import { Avatar } from "react-native-elements";
+// import { Avatar } from "react-native-elements";
+import { Avatar } from "react-native-paper";
 import CryptoJS from "crypto-js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TypeUk } from "../data/key";
@@ -167,23 +168,29 @@ export default function Chat() {
             style={{
               flexDirection: "row",
               // justifyContent: "center",
-              alignItems: "center",
             }}
           >
             {props.it.sendBy !== currentUser.uid && (
-              <Avatar
-                size="small"
-                rounded
-                source={{
-                  uri: "https://e7.pngegg.com/pngimages/505/761/png-clipart-login-computer-icons-avatar-icon-monochrome-black-thumbnail.png",
-                }}
+              // <Avatar
+              //   size="small"
+              //   rounded
+              //   source={{
+              //     uri: "https://e7.pngegg.com/pngimages/505/761/png-clipart-login-computer-icons-avatar-icon-monochrome-black-thumbnail.png",
+              //   }}
+              // />
+              <Avatar.Text
+                size={40}
+                label={itemChoose.name
+                  .split(" ")
+                  .map((word: any) => word.slice(0, 1))
+                  .join("")}
               />
             )}
             {props.it.type === "sms" ? (
               <Text style={{ padding: 10, fontSize: 20 }}>{props.it.msg}</Text>
             ) : (
               <Image
-                style={{ width: 300, height: 300 }}
+                style={{ width: 300, height: 300, padding: 10 }}
                 source={{ uri: `data:image/jpeg;base64,${props.it.msg}` }}
               />
             )}
@@ -282,7 +289,7 @@ export default function Chat() {
       >
         <View style={{ height: "100%" }}>
           <FlatList
-            style={{ backgroundColor: "tomato" }}
+            style={{ backgroundColor: "#8071d1" }}
             inverted
             data={messages}
             keyExtractor={(item) => JSON.stringify(item)}

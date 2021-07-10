@@ -16,7 +16,7 @@ import firebaseApp from "../firebase/config.js";
 
 import dataUser from "../data/dataUser";
 
-import { Avatar } from "react-native-elements";
+import { Avatar } from "react-native-paper";
 
 import { chooseItem } from "../slice/chooseItem";
 import { useDispatch, useSelector } from "react-redux";
@@ -73,7 +73,14 @@ export default function ListFriend() {
   // let dataUserCurrent: FirebaseAuthTypes.User;
   const navigation = useNavigation<ListFriendScreenProp>();
   const userCurrent = firebaseApp.auth().currentUser;
-  const [userDetail, setUserDetail] = useState<any>({});
+  const [userDetail, setUserDetail] = useState<any>({
+    email: "",
+
+    name: "",
+    profileImg: "",
+    uid: "",
+    isDoctored: false,
+  });
   const [doctor, setDoctor] = useState<any>({});
   const [keyAesStore, setKeyAesStore] = useState<any>(null);
   // const [keyAESFinal, setKeyAESFinal] = useState<any>(null);
@@ -388,12 +395,12 @@ export default function ListFriend() {
               // pickImage(userDetail.uid!);
             }}
           >
-            <Avatar
-              size="large"
-              rounded
-              source={{
-                uri: userDetail.profileImg,
-              }}
+            <Avatar.Text
+              size={80}
+              label={userDetail.name
+                .split(" ")
+                .map((word: any) => word.slice(0, 1))
+                .join("")}
             />
           </TouchableOpacity>
 

@@ -27,7 +27,7 @@ import { notification } from "../../network/User";
 import { Card } from "native-base";
 import colors from "../../colors/colors";
 import { AntDesign } from "@expo/vector-icons";
-
+import { Checkbox } from "react-native-paper";
 type FormKhaiBaoYTeScreenProp = StackNavigationProp<
   RootStackParamList,
   "KhaiBaoYTe"
@@ -39,6 +39,9 @@ export default function FormKhaiBaoYte() {
   const itemChoose = useSelector((state: any) => state.chooseItem);
   const userStore = useSelector((state: any) => state.UserStore);
   const navigation = useNavigation<FormKhaiBaoYTeScreenProp>();
+  const [checked1, setChecked1] = useState<boolean>(false);
+  const [checked2, setChecked2] = useState<boolean>(false);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: "Khai Báo y tế",
@@ -110,7 +113,14 @@ export default function FormKhaiBaoYte() {
     // }
   };
   const onSubmit = (data: any) => {
-    setData({ ...data, time: moment().format("MMMM Do YYYY, h:mm:ss a") });
+    setData({
+      ...data,
+      time: moment().format("MMMM Do YYYY, h:mm:ss a"),
+      "Trong vòng 14 ngày qua, Anh/Chị có đến tỉnh/thành phố, quốc gia/vùng lãnh thổ nào (Có thể đi qua nhiều nơi)":
+        checked1,
+      "Trong vòng 14 ngày qua, Anh/Chị có thấy xuất hiện ít nhất 1 trong các dấu hiệu: sốt, ho, khó thở, viêm phổi, đau họng, mệt mỏi không?":
+        checked2,
+    });
 
     reset({
       "Họ tên (ghi chữ IN HOA)": "",
@@ -123,7 +133,16 @@ export default function FormKhaiBaoYte() {
       "Phường / xã": "",
       "Số nhà, phố, tổ dân phố/thôn/đội ": "",
     });
-    console.log({ data });
+    setChecked2(false);
+    setChecked1(false);
+    console.log({
+      ...data,
+      time: moment().format("MMMM Do YYYY, h:mm:ss a"),
+      "Trong vòng 14 ngày qua, Anh/Chị có đến tỉnh/thành phố, quốc gia/vùng lãnh thổ nào (Có thể đi qua nhiều nơi)":
+        checked1,
+      "Trong vòng 14 ngày qua, Anh/Chị có thấy xuất hiện ít nhất 1 trong các dấu hiệu: sốt, ho, khó thở, viêm phổi, đau họng, mệt mỏi không?":
+        checked2,
+    });
   };
 
   const onChange = (arg: any) => {
@@ -184,6 +203,26 @@ export default function FormKhaiBaoYte() {
                 Số nhà, phố, tổ dân phố/thôn/đội:{" "}
                 {data["Số nhà, phố, tổ dân phố/thôn/đội "]}
               </Text>
+              <Text>
+                Trong vòng 14 ngày qua, Anh/Chị có đến tỉnh/thành phố, quốc
+                gia/vùng lãnh thổ nào "("Có thể đi qua nhiều nơi")":{" "}
+                {data[
+                  "Trong vòng 14 ngày qua, Anh/Chị có đến tỉnh/thành phố, quốc gia/vùng lãnh thổ nào (Có thể đi qua nhiều nơi)"
+                ]
+                  ? " có"
+                  : " Không"}
+              </Text>
+              <Text>
+                Trong vòng 14 ngày qua, Anh/Chị có thấy xuất hiện ít nhất 1
+                trong các dấu hiệu: sốt, ho, khó thở, viêm phổi, đau họng, mệt
+                mỏi không?:
+                {data[
+                  "Trong vòng 14 ngày qua, Anh/Chị có thấy xuất hiện ít nhất 1 trong các dấu hiệu: sốt, ho, khó thở, viêm phổi, đau họng, mệt mỏi không?"
+                ]
+                  ? " có"
+                  : " Không"}
+              </Text>
+
               <TouchableOpacity
                 onPress={async () => {
                   await pushQrKhaiBaoYTe({
@@ -375,14 +414,23 @@ export default function FormKhaiBaoYte() {
         {errors["Số nhà, phố, tổ dân phố/thôn/đội "] && (
           <Text style={{ color: "red" }}>This is required.</Text>
         )}
-        <Text>
-          Trong vòng 14 ngày qua, Anh/Chị có đến tỉnh/thành phố, quốc gia/vùng
-          lãnh thổ nào (Có thể đi qua nhiều nơi)
-        </Text>
-        <Text>
-          Trong vòng 14 ngày qua, Anh/Chị có thấy xuất hiện ít nhất 1 trong các
-          dấu hiệu: sốt, ho, khó thở, viêm phổi, đau họng, mệt mỏi không?
-        </Text>
+
+        <Checkbox.Item
+          label="Trong vòng 14 ngày qua, Anh/Chị có đến tỉnh/thành phố, quốc gia/vùng
+          lãnh thổ nào (Có thể đi qua nhiều nơi)"
+          status={checked1 ? "checked" : "unchecked"}
+          onPress={() => {
+            setChecked1(!checked1);
+          }}
+        />
+        <Checkbox.Item
+          label="Trong vòng 14 ngày qua, Anh/Chị có thấy xuất hiện ít nhất 1 trong các
+          dấu hiệu: sốt, ho, khó thở, viêm phổi, đau họng, mệt mỏi không?"
+          status={checked2 ? "checked" : "unchecked"}
+          onPress={() => {
+            setChecked2(!checked2);
+          }}
+        />
         <View style={styles.button}>
           <Button
             // style={styles.buttonInner}
@@ -413,7 +461,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingTop: Constants.statusBarHeight,
     padding: 8,
-    backgroundColor: "#0e101c",
+    backgroundColor: "#8071d1",
   },
   input: {
     backgroundColor: "white",

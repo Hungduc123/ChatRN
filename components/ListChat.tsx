@@ -1,4 +1,3 @@
-import { Card } from "native-base";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -15,7 +14,8 @@ import firebaseApp from "../firebase/config.js";
 import { log } from "react-native-reanimated";
 import dataUser from "../data/dataUser";
 import ShowUsers from "./showUser";
-import { Avatar } from "react-native-elements";
+// import { Avatar } from "react-native-elements";
+import { Avatar } from "react-native-paper";
 
 import * as ImagePicker from "expo-image-picker";
 import { chooseItem } from "../slice/chooseItem";
@@ -33,6 +33,8 @@ import { FontAwesome5, Fontisto } from "@expo/vector-icons";
 import _ from "lodash";
 import moment from "moment";
 import { Searchbar } from "react-native-paper";
+import { Button, Card, Title, Paragraph } from "react-native-paper";
+
 type ListChatScreenProp = StackNavigationProp<RootStackParamList, "ListChat">;
 // const key = CryptoJS.enc.Utf8.parse("0123456789abcdef");
 // console.log("====================================");
@@ -107,6 +109,7 @@ export default function ListChat() {
           width: "100%",
           alignItems: "center",
           justifyContent: "center",
+          padding: 5,
         }}
         onPress={async () => {
           // await getUkRSA(props.it).then((tempUkReceiver) => {
@@ -120,7 +123,7 @@ export default function ListChat() {
           navigation.navigate("KhaiBaoOrChat");
         }}
       >
-        <Card style={{ width: "90%", borderRadius: 10, padding: 15 }}>
+        {/* <Card style={{ width: "90%", borderRadius: 10, padding: 15 }}>
           <View
             style={{
               flexDirection: "row",
@@ -128,11 +131,12 @@ export default function ListChat() {
               justifyContent: "space-between",
             }}
           >
-            <Avatar
-              rounded
-              source={{
-                uri: props.it.profileImg,
-              }}
+            <Avatar.Text
+              size={40}
+              label={props.it.name
+                .split(" ")
+                .map((word: any) => word.slice(0, 1))
+                .join("")}
             />
             <View>
               {props.it.newMsg ? (
@@ -182,9 +186,76 @@ export default function ListChat() {
             </View>
           )}
         </Card>
+       */}
+        <Card style={{ width: "95%", padding: 10, borderRadius: 15 }}>
+          <Card.Title
+            title={props.it.name}
+            subtitle={
+              moment(props.it.time, "MMMM Do YYYY, h:mm:ss a")
+                .startOf("minute")
+                .fromNow()
+                .includes("seconds") ||
+              moment(props.it.time, "MMMM Do YYYY, h:mm:ss a")
+                .startOf("minute")
+                .fromNow()
+                .includes("a minute ago") ? (
+                <View
+                  style={{
+                    width: "100%",
+                    flexDirection: "row",
+                    // alignItems: "center",
+                    // justifyContent: "space-around",
+                  }}
+                >
+                  <Text style={{ color: "green" }}>Active Now</Text>
+                  {/* <Fontisto name="radio-btn-active" size={24} color="green" /> */}
+                </View>
+              ) : (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text style={{ color: "#FFCC00" }}>
+                    {moment(props.it.time, "MMMM Do YYYY, h:mm:ss a")
+                      .startOf("minute")
+                      .fromNow()}
+                  </Text>
+                  {/* <Fontisto name="radio-btn-active" size={20} color="#FFCC00" /> */}
+                </View>
+              )
+            }
+            left={() => {
+              return LeftContent(props);
+            }}
+          />
+
+          <Paragraph>
+            <View>
+              {props.it.newMsg ? (
+                <Text style={{ fontWeight: "bold" }}>
+                  Bạn có tin nhắn mới chưa đọc
+                </Text>
+              ) : (
+                <></>
+              )}
+            </View>
+          </Paragraph>
+        </Card>
       </TouchableOpacity>
     );
   };
+  const LeftContent = (props: any) => (
+    <Avatar.Text
+      size={40}
+      label={props.it.name
+        .split(" ")
+        .map((word: any) => word.slice(0, 1))
+        .join("")}
+    />
+  );
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Searchbar
