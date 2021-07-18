@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   View,
   Text,
@@ -16,19 +16,21 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import moment from "moment";
 import { UpdateUser } from "../network/User";
+import colors from "../colors/colors";
 
-type HomeScreenProp = StackNavigationProp<RootStackParamList, "Register">;
+type HomeScreenProp = StackNavigationProp<RootStackParamList, "Setting">;
 
 export default function Setting() {
   const navigation = useNavigation<HomeScreenProp>();
   const currentUser = firebaseApp.auth().currentUser;
-  const [email, setEmail] = useState<string>(
-    JSON.stringify(firebaseApp.auth().currentUser)
-  );
-  const key = useSelector((state: any) => state.PublicKey);
   useEffect(() => {
     UpdateUser(currentUser.uid, moment().format("MMMM Do YYYY, h:mm:ss a"));
   }, []);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: "Setting",
+    });
+  }, [navigation]);
   return (
     <SafeAreaView style={styles.container}>
       <Text>setting</Text>
@@ -82,9 +84,8 @@ export default function Setting() {
           ]);
         }}
       >
-        <Text>Logout</Text>
+        <Text style={{ color: colors.first, fontSize: 20 }}>Logout</Text>
       </TouchableOpacity>
-      <Text>{JSON.stringify(key)}</Text>
     </SafeAreaView>
   );
 }

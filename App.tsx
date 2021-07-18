@@ -39,7 +39,7 @@ export default function App() {
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
 
-            if (route.name === "ListFriend") {
+            if (route.name === "Information") {
               iconName = focused
                 ? "ios-information-circle"
                 : "ios-information-circle-outline";
@@ -58,7 +58,7 @@ export default function App() {
           inactiveTintColor: "gray",
         }}
       >
-        <Tab.Screen name="ListFriend" component={ListFriend} />
+        <Tab.Screen name="Information" component={ListFriend} />
         <Tab.Screen name="Tracking" component={Tracking} />
 
         <Tab.Screen name="Setting" component={Setting} />

@@ -14,8 +14,6 @@ import styles from "../styles/styles";
 import firebaseApp from "../firebase/config.js";
 // import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
-import dataUser from "../data/dataUser";
-
 import { Avatar } from "react-native-paper";
 
 import { chooseItem } from "../slice/chooseItem";
@@ -54,7 +52,7 @@ import { UpdateUser } from "../network/User";
 // console.log(iv); //?
 type ListFriendScreenProp = StackNavigationProp<
   RootStackParamList,
-  "ListFriend"
+  "Information"
 >;
 // const key = CryptoJS.enc.Utf8.parse("0123456789abcdef");
 // console.log("====================================");
@@ -64,6 +62,9 @@ type ListFriendScreenProp = StackNavigationProp<
 // console.log("====================================");
 // console.log(iv);
 // console.log("====================================");
+const a = {};
+const b = {};
+console.log(a === b);
 
 export default function ListFriend() {
   var RSAKey = require("react-native-rsa");
@@ -73,22 +74,23 @@ export default function ListFriend() {
   // let dataUserCurrent: FirebaseAuthTypes.User;
   const navigation = useNavigation<ListFriendScreenProp>();
   const userCurrent = firebaseApp.auth().currentUser;
-  const [userDetail, setUserDetail] = useState<any>({
-    email: "",
-
-    name: "",
-    profileImg: "",
-    uid: "",
-    isDoctored: false,
-  });
-  const [doctor, setDoctor] = useState<any>({});
+  // const [userDetail, setUserDetail] = useState<any>({
+  //   email: "",
+  //   name: "",
+  //   profileImg: "",
+  //   uid: "",
+  //   isDoctored: false,
+  // });
+  const [userDetail, setUserDetail] = useState<any>(null);
+  const [doctor, setDoctor] = useState<any>(null);
   const [keyAesStore, setKeyAesStore] = useState<any>(null);
   // const [keyAESFinal, setKeyAESFinal] = useState<any>(null);
   const [ukItemChoose, setUkItemChoose] = useState<any>(null);
   const [keyAesDatabase, setKeyAesDatabase] = useState<any>(null);
-  const [pk, setPk] = useState<any>(null);
+  // const [pk, setPk] = useState<any>(null);
 
-  //////////////////////////////////////////////////////////////////////////////////////////////
+  // const [doneKeyRsa, setDoneKeyRsa] = useState<boolean>(false);
+  ////////////////////////////////////////////////////=//////////////////////////////////////////
   const genKey = async () => {
     var RSAKey = require("react-native-rsa");
     const bits = 1024;
@@ -112,7 +114,7 @@ export default function ListFriend() {
     const actionPk = PrivateKey({
       ...privateKey,
     });
-    setPk({ ...privateKey });
+    // setPk({ ...privateKey });
     dispatch(actionPk);
     dispatch(actionUk);
     await pushKey(publicKey);
@@ -202,6 +204,8 @@ export default function ListFriend() {
         console.log("u   " + u + "-----------------------------------");
 
         console.log("p    " + p + "-----------------------------------");
+        // setDoneKeyRsa(true);
+
         if (u !== null && p !== null) {
           console.log("yes++++++++++++++++++++++++");
           const uK = JSON.parse(u!);
@@ -220,7 +224,7 @@ export default function ListFriend() {
           console.log("p" + p + "-----------------------------------");
         } else {
           console.log("no+++++++++++++++++++++++");
-
+          // setDoneKeyRsa(true);
           await genKey();
         }
       } catch (e) {
@@ -241,14 +245,18 @@ export default function ListFriend() {
         console.log("already key AES");
         const action = KeyAES(keyAesStore);
         dispatch(action);
-        // setKeyAesStore(JSON.parse(keyAesStore));
+        setKeyAesStore(JSON.parse(keyAesStore));
       } else {
         console.log("create key AES");
-        const key = CryptoJS.enc.Utf8.parse("0123456789abcdef");
+        const key = CryptoJS.enc.Utf8.parse(currentUser.uid.slice(0, 16));
+        // const key = CryptoJS.enc.Utf8.parse("0123456789abcdef");
+
         console.log("====================================");
         console.log(key);
         console.log("====================================");
-        const iv = CryptoJS.enc.Utf8.parse("abcdef0123456789");
+        // const iv = CryptoJS.enc.Utf8.parse("abcdef0123456789");
+        const iv = CryptoJS.enc.Utf8.parse(currentUser.uid.slice(1, 17));
+
         console.log("====================================");
         console.log(iv);
         console.log("====================================");
@@ -276,6 +284,9 @@ export default function ListFriend() {
   };
   const getUkRSADatabase = async (itemChoose: any) => {
     let tempUkReceiver;
+    console.log("====================================");
+    console.log(itemChoose.uid);
+    console.log("====================================");
     try {
       await firebaseApp
         .database()
@@ -345,11 +356,9 @@ export default function ListFriend() {
   };
 
   useEffect(() => {
-    if (userDetail && doctor) {
+    if (userDetail !== null && doctor != null) {
       if (!userDetail.isDoctored) {
         getKeyAesStore(userDetail, doctor);
-        console.log("====================================");
-        console.log("aaaaaaaaaaaaa");
         console.log("====================================");
         console.log(" doIt a");
       }
@@ -361,7 +370,12 @@ export default function ListFriend() {
     }
   }, [keyAesStore, doctor]);
   useEffect(() => {
-    if (ukItemChoose !== null && keyAesStore !== null) {
+    if (
+      ukItemChoose !== null &&
+      keyAesStore !== null &&
+      doctor !== null &&
+      userDetail !== null
+    ) {
       console.log({ ukItemChoose });
       console.log({ keyAesStore });
 
@@ -395,21 +409,46 @@ export default function ListFriend() {
               // pickImage(userDetail.uid!);
             }}
           >
-            <Avatar.Text
-              size={80}
-              label={userDetail.name
-                .split(" ")
-                .map((word: any) => word.slice(0, 1))
-                .join("")}
-            />
+            {userDetail ? (
+              <>
+                <Avatar.Text
+                  size={80}
+                  label={
+                    userDetail
+                      ? userDetail.name
+                          .split(" ")
+                          .map((word: any) => word.slice(0, 1))
+                          .join("")
+                      : "..."
+                  }
+                />
+                <Text>{userDetail ? userDetail.name : "..."}</Text>
+                <Text>{userDetail ? userDetail.email : "..."}</Text>
+                <Text>
+                  {userDetail
+                    ? userDetail.isDoctored
+                      ? "Admin"
+                      : "User"
+                    : "..."}
+                </Text>
+              </>
+            ) : (
+              <>
+                <Avatar.Text size={80} label={"..."} />
+                <Text>{userDetail ? userDetail.name : "..."}</Text>
+                <Text>{userDetail ? userDetail.email : "..."}</Text>
+                <Text>
+                  {userDetail
+                    ? userDetail.isDoctored
+                      ? "Admin"
+                      : "User"
+                    : "..."}
+                </Text>
+              </>
+            )}
           </TouchableOpacity>
-
-          <Text>{userDetail.name}</Text>
-          <Text>{userDetail.email}</Text>
-
-          <Text>{userDetail.isDoctored ? "Admin" : "User"}</Text>
         </Card>
-        {!userDetail.isDoctored && (
+        {userDetail && !userDetail.isDoctored && (
           <>
             <TouchableOpacity
               onPress={() => {

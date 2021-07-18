@@ -14,6 +14,7 @@ public class BasePackageList {
         new expo.modules.application.ApplicationPackage(),
         new expo.modules.errorrecovery.ErrorRecoveryPackage(),
         new expo.modules.font.FontLoaderPackage(),
+        new expo.modules.imagemanipulator.ImageManipulatorPackage(),
         new expo.modules.imagepicker.ImagePickerPackage(),
         new expo.modules.keepawake.KeepAwakePackage(),
         new expo.modules.lineargradient.LinearGradientPackage(),
