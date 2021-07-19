@@ -384,25 +384,33 @@ export default function ListFriend() {
   }, [ukItemChoose, keyAesStore, userDetail, doctor]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={{ flex: 1, width: "100%" }}>
-        <TouchableOpacity
-          onPress={() => {
-            if (!userDetail.isDoctored) {
-              const action = chooseItem({ ...doctor });
-              dispatch(action);
-              navigation.navigate("Chat");
-            } else {
-              navigation.navigate("ListChat");
-            }
-          }}
-        >
-          <FontAwesome5
-            name="facebook-messenger"
-            size={30}
-            color={colors.first}
-          />
-        </TouchableOpacity>
+    <SafeAreaView style={{ flex: 1 }}>
+      <TouchableOpacity
+        onPress={() => {
+          if (!userDetail.isDoctored) {
+            const action = chooseItem({ ...doctor });
+            dispatch(action);
+            navigation.navigate("Chat");
+          } else {
+            navigation.navigate("ListChat");
+          }
+        }}
+        style={{ padding: 20 }}
+      >
+        <FontAwesome5
+          name="facebook-messenger"
+          size={30}
+          color={colors.first}
+        />
+      </TouchableOpacity>
+      <View
+        style={{
+          flex: 1,
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Card style={styles.card}>
           <TouchableOpacity
             onPress={() => {
@@ -410,7 +418,12 @@ export default function ListFriend() {
             }}
           >
             {userDetail ? (
-              <>
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 <Avatar.Text
                   size={80}
                   label={
@@ -422,7 +435,9 @@ export default function ListFriend() {
                       : "..."
                   }
                 />
-                <Text>{userDetail ? userDetail.name : "..."}</Text>
+                <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+                  {userDetail ? userDetail.name : "..."}
+                </Text>
                 <Text>{userDetail ? userDetail.email : "..."}</Text>
                 <Text>
                   {userDetail
@@ -431,7 +446,7 @@ export default function ListFriend() {
                       : "User"
                     : "..."}
                 </Text>
-              </>
+              </View>
             ) : (
               <>
                 <Avatar.Text size={80} label={"..."} />
@@ -449,30 +464,65 @@ export default function ListFriend() {
           </TouchableOpacity>
         </Card>
         {userDetail && !userDetail.isDoctored && (
-          <>
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             <TouchableOpacity
+              style={{ width: "40%" }}
               onPress={() => {
                 navigation.navigate("KhaiBaoYTe");
               }}
             >
-              <Card>
+              <Card
+                style={{
+                  width: "100%",
+                  height: "70%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 15,
+                }}
+              >
                 <Text>Khai Báo y tế</Text>
               </Card>
             </TouchableOpacity>
             <TouchableOpacity
+              style={{ width: "40%" }}
               onPress={() => {
                 const action = chooseItem({ ...userDetail });
                 dispatch(action);
                 navigation.navigate("HistoryKhaiBaoYTe");
               }}
             >
-              <Card>
+              <Card
+                style={{
+                  width: "100%",
+                  height: "70%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 15,
+                }}
+              >
                 <Text>Lịch sử khai báo y tế</Text>
               </Card>
             </TouchableOpacity>
-          </>
+            {/* <Image
+              source={require("../assets/lifesavers_new_patient.png")}
+              style={{ width: "70%", height: "50%" }}
+            ></Image> */}
+          </View>
         )}
-      </ScrollView>
+        {userDetail && userDetail.isDoctored && (
+          <Image
+            source={require("../assets/lifesavers_hand.png")}
+            style={{ width: "80%", height: "80%" }}
+          ></Image>
+        )}
+      </View>
     </SafeAreaView>
   );
 }

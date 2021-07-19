@@ -52,47 +52,6 @@ function Login() {
 
   const dispatch = useDispatch();
 
-  // const genKey = (user: any) => {
-  //   var RSAKey = require("react-native-rsa");
-  //   const bits = 1024;
-  //   const exponent = "10001"; // must be a string. This is hex string. decimal = 65537
-  //   var rsa = new RSAKey();
-  //   rsa.generate(bits, exponent);
-  //   var publicKey: TypeUk = JSON.parse(rsa.getPublicString()); // return json encoded string
-
-  //   var privateKey: TypePk = JSON.parse(rsa.getPrivateString()); // return json encoded string
-
-  //   console.log("publicKey +---------------------------------------------");
-
-  //   console.log(publicKey);
-  //   console.log("privateKey---------------------------------------------");
-
-  //   console.log(privateKey);
-
-  //   const actionUk = PublicKey({
-  //     ...publicKey,
-  //   });
-  //   const actionPk = PrivateKey({
-  //     ...privateKey,
-  //   });
-  //   dispatch(actionPk);
-  //   dispatch(actionUk);
-  //   pushKey(user, publicKey);
-  // };
-  // const pushKey = (user: dataUser, publicKey: TypeUk) => {
-  //   /////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //   try {
-  //     firebaseApp
-  //       .database()
-  //       .ref("publicKey/" + user.uid)
-  //       .set({
-  //         ...publicKey,
-  //       });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  //   ////////////////////////////////////////////////////////////////////
-  // };
   const login = () => {
     setLoading(true);
     if (loginAsDoctor) {
@@ -159,25 +118,6 @@ function Login() {
     }
   };
 
-  // const storeKey = async (
-  //   publicKey: TypeUk | null,
-  //   privateKey: TypePk | null
-  // ) => {
-  //   try {
-  //     const jsonPublicKey = JSON.stringify(publicKey);
-  //     const jsonPrivateKey = JSON.stringify(privateKey);
-
-  //     await AsyncStorage.setItem("publicKey", jsonPublicKey);
-  //     await AsyncStorage.setItem("publicKey", jsonPrivateKey);
-  //     const u = await AsyncStorage.getItem("publicKey");
-  //     const p = await AsyncStorage.getItem("publicKey");
-  //     console.log("u" + u + "-----------------------------------");
-
-  //     console.log("p" + p + "-----------------------------------");
-  //   } catch (e) {
-  //     // saving error
-  //   }
-  // };
   const checkDoctor = (code: string) => {
     if (code === "12345") {
       setLoginAsDoctor(true);
@@ -197,6 +137,10 @@ function Login() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
       >
+        <Image
+          source={require("../assets/lifesavers_bust.png")}
+          style={{ width: 300, height: 300 }}
+        ></Image>
         <View
           style={{
             justifyContent: "center",
@@ -207,11 +151,12 @@ function Login() {
             style={{
               fontSize: 30,
               fontWeight: "bold",
-              color: "#CC6666",
+              color: "skyblue",
               paddingBottom: 10,
             }}
           >
-            Welcome {loginAsDoctor ? "Doctor" : "User"}
+            Welcome
+            {/* Welcome {loginAsDoctor ? "Doctor" : "User"} */}
           </Text>
         </View>
         <Card
@@ -227,17 +172,17 @@ function Login() {
               justifyContent: "space-between",
               alignItems: "center",
               borderRadius: 20,
-              shadowColor: colors.first,
+              shadowColor: "skyblue",
             }}
           >
-            <Text style={{ color: colors.first }}>User Name: </Text>
+            <Text style={{ color: "skyblue" }}>User Name: </Text>
             <TextInput
               textAlign="center"
               onChangeText={(Value) => setEmail(Value)}
               style={{
                 height: 40,
                 width: 200,
-                borderColor: colors.first,
+                borderColor: "skyblue",
 
                 borderWidth: 1,
                 // backgroundColor: "#ADDFFF",
@@ -255,17 +200,17 @@ function Login() {
               justifyContent: "space-between",
               alignItems: "center",
               borderRadius: 20,
-              shadowColor: colors.first,
+              shadowColor: "skyblue",
             }}
           >
-            <Text style={{ color: colors.first }}>Password:</Text>
+            <Text style={{ color: "skyblue" }}>Password:</Text>
             <TextInput
               textAlign="center"
               onChangeText={(Value) => setPassword(Value)}
               style={{
                 height: 40,
                 width: 200,
-                borderColor: colors.first,
+                borderColor: "skyblue",
                 borderWidth: 1,
                 borderRadius: 30,
                 justifyContent: "center",
@@ -286,10 +231,12 @@ function Login() {
         >
           <TouchableOpacity
             onPress={() => {
-              login();
+              if (password.length !== 0 && email.length !== 0) {
+                login();
+              } else alert("Vui lòng điền đủ thông tin");
             }}
             style={{
-              backgroundColor: "orange",
+              backgroundColor: "skyblue",
 
               borderRadius: 20,
               width: 100,
@@ -298,7 +245,7 @@ function Login() {
               alignItems: "center",
             }}
           >
-            <Text>Login</Text>
+            <Text style={{ color: "white" }}>Đăng Nhập</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
@@ -307,7 +254,7 @@ function Login() {
               setPassword("");
             }}
             style={{
-              backgroundColor: "orange",
+              backgroundColor: "skyblue",
               borderRadius: 20,
               width: 100,
               height: 50,
@@ -315,16 +262,16 @@ function Login() {
               alignItems: "center",
             }}
           >
-            <Text>Register</Text>
+            <Text style={{ color: "white" }}>Đăng Ký</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => {
             setOpenCheckIsDoctor(true);
           }}
         >
           <Text>Are you a doctor? Press Here </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         {openCheckIsDoctor && (
           <Modal
             animationType="slide"
@@ -346,7 +293,7 @@ function Login() {
                   justifyContent: "space-around",
                   alignItems: "center",
                   borderRadius: 20,
-                  shadowColor: colors.first,
+                  shadowColor: "skyblue",
                   width: "90%",
                 }}
               >
@@ -358,16 +305,16 @@ function Login() {
                   }}
                   onPress={() => setOpenCheckIsDoctor(false)}
                 >
-                  <AntDesign name="back" size={24} color={colors.first} />
+                  <AntDesign name="back" size={24} color="skyblue" />
                 </TouchableOpacity>
-                <Text style={{ color: colors.first, fontSize: 30 }}>CODE</Text>
+                <Text style={{ color: "skyblue", fontSize: 30 }}>CODE</Text>
                 <TextInput
                   textAlign="center"
                   onChangeText={(Value) => setCodeIsDoctor(Value)}
                   style={{
                     height: 40,
                     width: 200,
-                    borderColor: colors.first,
+                    borderColor: "skyblue",
                     borderWidth: 1,
                     borderRadius: 30,
                     justifyContent: "center",
@@ -384,7 +331,7 @@ function Login() {
                     checkDoctor(codeIsDoctor);
                   }}
                   style={{
-                    backgroundColor: "orange",
+                    backgroundColor: "skyblue",
                     borderRadius: 20,
                     width: 100,
                     height: 50,
@@ -400,7 +347,7 @@ function Login() {
         )}
         {loading && (
           <Modal animationType="fade" transparent={true} visible={loading}>
-            <Loading></Loading>
+            <Loading name="đăng nhập"></Loading>
           </Modal>
         )}
       </KeyboardAvoidingView>

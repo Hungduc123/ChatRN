@@ -27,6 +27,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./RootStackParamList";
 import { AddUser } from "../network/User";
+
 type RegisterScreenProp = StackNavigationProp<RootStackParamList, "Register">;
 
 function Register() {
@@ -35,6 +36,8 @@ function Register() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [fullName, setFullName] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+
   const [loading, setLoading] = useState<boolean>(false);
 
   const registerHandler = () => {
@@ -56,22 +59,31 @@ function Register() {
           setEmail("");
           setPassword("");
           setFullName("");
+          setConfirmPassword("");
+          alert("Đăng Ký thành công");
+          navigation.navigate("Login");
         });
       })
       .catch((error: any) => {
         if (error.code === "auth/email-already-in-use") {
           console.log("That email address is already in use!");
           setLoading(false);
-          alert("That email address is already in use!");
+          alert("Email đã được dùng, vui lòng chọn email khác!");
         }
 
         if (error.code === "auth/invalid-email") {
           console.log("That email address is invalid!");
           setLoading(false);
-          alert("That email address is invalid!");
+          alert("email không đúng định dạng!");
+        }
+        if (error.code === "auth/weak-password") {
+          console.log("mk yeu !");
+          setLoading(false);
+          alert("Mật khẩu phải lớn 6 ký tự");
         }
 
-        console.error(error);
+        console.error("error.code");
+        console.error(error.code);
       });
   };
   return (
@@ -80,6 +92,10 @@ function Register() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
       >
+        <Image
+          source={require("../assets/lifesavers_caretaking.png")}
+          style={{ width: 300, height: 300 }}
+        ></Image>
         <View
           style={{
             justifyContent: "center",
@@ -90,11 +106,11 @@ function Register() {
             style={{
               fontSize: 30,
               fontWeight: "bold",
-              color: "#CC6666",
+              color: "skyblue",
               paddingBottom: 10,
             }}
           >
-            Register
+            Đăng Ký
           </Text>
         </View>
         <Card
@@ -110,17 +126,17 @@ function Register() {
               justifyContent: "space-between",
               alignItems: "center",
               borderRadius: 20,
-              shadowColor: colors.first,
+              shadowColor: "skyblue",
             }}
           >
-            <Text style={{ color: colors.first }}>Full Name: </Text>
+            <Text style={{ color: "skyblue" }}>Full Name: </Text>
             <TextInput
               textAlign="center"
               onChangeText={(Value) => setFullName(Value)}
               style={{
                 height: 40,
                 width: 200,
-                borderColor: colors.first,
+                borderColor: "skyblue",
 
                 borderWidth: 1,
                 // backgroundColor: "#ADDFFF",
@@ -138,17 +154,17 @@ function Register() {
               justifyContent: "space-between",
               alignItems: "center",
               borderRadius: 20,
-              shadowColor: colors.first,
+              shadowColor: "skyblue",
             }}
           >
-            <Text style={{ color: colors.first }}>Email: </Text>
+            <Text style={{ color: "skyblue" }}>Email: </Text>
             <TextInput
               textAlign="center"
               onChangeText={(Value) => setEmail(Value)}
               style={{
                 height: 40,
                 width: 200,
-                borderColor: colors.first,
+                borderColor: "skyblue",
 
                 borderWidth: 1,
                 // backgroundColor: "#ADDFFF",
@@ -166,17 +182,17 @@ function Register() {
               justifyContent: "space-between",
               alignItems: "center",
               borderRadius: 20,
-              shadowColor: colors.first,
+              shadowColor: "skyblue",
             }}
           >
-            <Text style={{ color: colors.first }}>Password:</Text>
+            <Text style={{ color: "skyblue" }}>Password:</Text>
             <TextInput
               textAlign="center"
               onChangeText={(Value) => setPassword(Value)}
               style={{
                 height: 40,
                 width: 200,
-                borderColor: colors.first,
+                borderColor: "skyblue",
                 borderWidth: 1,
                 borderRadius: 30,
                 justifyContent: "center",
@@ -186,6 +202,35 @@ function Register() {
               placeholder="Enter your password"
               secureTextEntry
               value={password}
+            />
+          </Card>
+          <Card
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              borderRadius: 20,
+              shadowColor: "skyblue",
+            }}
+          >
+            <Text style={{ color: "skyblue" }}>Confirm {"\n"}password: </Text>
+            <TextInput
+              textAlign="center"
+              onChangeText={(Value) => setConfirmPassword(Value)}
+              style={{
+                height: 40,
+                width: 200,
+                borderColor: "skyblue",
+
+                borderWidth: 1,
+                // backgroundColor: "#ADDFFF",
+
+                borderRadius: 30,
+              }}
+              placeholderTextColor="gray"
+              secureTextEntry
+              placeholder="Enter confirm password"
+              value={confirmPassword}
             />
           </Card>
         </Card>
@@ -201,7 +246,7 @@ function Register() {
             // }}
             onPress={() => navigation.navigate("Login")}
             style={{
-              backgroundColor: "orange",
+              backgroundColor: "skyblue",
 
               borderRadius: 20,
               width: 100,
@@ -210,15 +255,25 @@ function Register() {
               alignItems: "center",
             }}
           >
-            <Text>Login</Text>
+            <Text style={{ color: "white" }}>Đăng Nhập</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               // alert("aaa");
-              registerHandler();
+              if (
+                fullName !== "" &&
+                email !== "" &&
+                password !== "" &&
+                confirmPassword !== "" &&
+                password === confirmPassword
+              ) {
+                registerHandler();
+              } else {
+                alert("Vui lòng điền đủ và đúng thông tin");
+              }
             }}
             style={{
-              backgroundColor: "orange",
+              backgroundColor: "skyblue",
               borderRadius: 20,
               width: 100,
               height: 50,
@@ -226,12 +281,12 @@ function Register() {
               alignItems: "center",
             }}
           >
-            <Text>Register</Text>
+            <Text style={{ color: "white" }}>Đăng Ký</Text>
           </TouchableOpacity>
         </View>
         {loading && (
           <Modal animationType="fade" transparent={true} visible={loading}>
-            <Loading></Loading>
+            <Loading name="đăng ký"></Loading>
           </Modal>
         )}
       </KeyboardAvoidingView>

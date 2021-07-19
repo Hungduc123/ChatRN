@@ -47,6 +47,10 @@ export default function App() {
               iconName = focused ? "list" : "ios-list";
             } else if (route.name === "Tracking") {
               iconName = focused ? "bar-chart" : "bar-chart-outline";
+            } else if (route.name === "Notification") {
+              iconName = focused
+                ? "ios-notifications-circle"
+                : "ios-notifications-circle-outline";
             }
 
             // You can return any component that you like here!
@@ -60,9 +64,9 @@ export default function App() {
       >
         <Tab.Screen name="Information" component={ListFriend} />
         <Tab.Screen name="Tracking" component={Tracking} />
+        <Tab.Screen name="Notification" component={Notification} />
 
         <Tab.Screen name="Setting" component={Setting} />
-        <Tab.Screen name="Notification" component={Notification} />
       </Tab.Navigator>
     );
   }
