@@ -33,7 +33,7 @@ export default function Setting() {
   }, [navigation]);
   return (
     <SafeAreaView style={styles.container}>
-      <Text>setting</Text>
+      <Text style={{ fontSize: 30 }}>Setting</Text>
       <TouchableOpacity
         onPress={() => {
           Alert.alert("Notification", "Do you want logout", [

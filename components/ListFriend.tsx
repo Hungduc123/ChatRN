@@ -62,10 +62,12 @@ type ListFriendScreenProp = StackNavigationProp<
 // console.log("====================================");
 // console.log(iv);
 // console.log("====================================");
-const a = {};
-const b = {};
-console.log(a === b);
+const a = CryptoJS.enc.Utf8.parse("0123456789abcdef");
 
+console.log(
+  "=================================================================================================================="
+);
+console.log({ a });
 export default function ListFriend() {
   var RSAKey = require("react-native-rsa");
   var rsa = new RSAKey();

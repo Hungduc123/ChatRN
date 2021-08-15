@@ -11,6 +11,7 @@ type DataInVietNamScreenProp = StackNavigationProp<
   "KhaiBaoYTe"
 >;
 export default function DataInVietNam() {
+  console.disableYellowBox = true;
   const navigation = useNavigation<DataInVietNamScreenProp>();
   useLayoutEffect(() => {
     navigation.setOptions({

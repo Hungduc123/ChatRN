@@ -6,7 +6,9 @@ import moment from "moment";
 
 export default function Highlight({ report }) {
   const data = report && report.length ? report[report.length - 1] : [];
-
+  console.log("====================================");
+  console.log({ data });
+  console.log("====================================");
   return (
     <Card
       style={{
@@ -60,7 +62,8 @@ export default function Highlight({ report }) {
               }}
             />
             <Text style={{ fontSize: 20, color: "green" }}>
-              {data.Recovered}
+              {/* {data.Recovered} */}
+              ...updating
             </Text>
 
             <Text>Số ca hồi phục</Text>

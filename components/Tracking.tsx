@@ -10,6 +10,7 @@ import {
   Modal,
   Image,
   ImageBackground,
+  Linking,
 } from "react-native";
 import { getCountries, getDataChart, getReportByCountry } from "../apis";
 import styles from "../styles/styles";
@@ -31,6 +32,8 @@ import { UpdateUser } from "../network/User";
 
 type TrackingScreenProp = StackNavigationProp<RootStackParamList, "ListFriend">;
 export default function Tracking() {
+  console.disableYellowBox = true;
+
   const dispatch = useDispatch();
   const navigation = useNavigation<TrackingScreenProp>();
   const currentUser = firebaseApp.auth().currentUser;
@@ -93,6 +96,8 @@ export default function Tracking() {
         console.log({ res });
         res.data.pop();
         setReport(res.data);
+        console.log("res.data");
+        console.log(res.data);
       });
     }
   }, [countries, selectedCountryId]);
@@ -205,9 +210,9 @@ export default function Tracking() {
                 padding: 10,
               }}
             />
-            <Text style={{ fontSize: 20, color: "red" }}>number</Text>
+            <Text style={{ fontSize: 20, color: "red" }}>...updating</Text>
 
-            <Text>number</Text>
+            <Text>...updating</Text>
           </Card>
           <Card style={styles.tab}>
             <Image
@@ -219,9 +224,9 @@ export default function Tracking() {
                 padding: 10,
               }}
             />
-            <Text style={{ fontSize: 20, color: "red" }}>number</Text>
+            <Text style={{ fontSize: 20, color: "red" }}>...updating</Text>
 
-            <Text>number</Text>
+            <Text>...updating</Text>
           </Card>
 
           <Card style={styles.tab}>
@@ -280,9 +285,9 @@ export default function Tracking() {
                 padding: 10,
               }}
             />
-            <Text style={{ fontSize: 20, color: "red" }}>number</Text>
+            <Text style={{ fontSize: 20, color: "red" }}>...updating</Text>
 
-            <Text>number</Text>
+            <Text>...updating</Text>
           </Card>
           <Card style={styles.tab}>
             <Image
@@ -294,9 +299,16 @@ export default function Tracking() {
                 padding: 10,
               }}
             />
-            <Text style={{ fontSize: 20, color: "red" }}>number</Text>
+            <Text
+              onPress={() => {
+                Linking.openURL("tel:19009095");
+              }}
+              style={{ fontSize: 20, color: "red" }}
+            >
+              19009095
+            </Text>
 
-            <Text>number</Text>
+            <Text>Đường dây nóng</Text>
           </Card>
         </View>
       </ScrollView>

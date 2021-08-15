@@ -97,12 +97,10 @@ export default function Notification() {
             }}
           >
             <View>
-              <Text style={{ fontWeight: !props.it.seen ? "bold" : "400" }}>
+              <Text>
                 {props.it.notification} từ {props.it.Sender.name}
               </Text>
-              <Text style={{ fontWeight: !props.it.seen ? "bold" : "400" }}>
-                vào {props.it.time}
-              </Text>
+              <Text>vào {props.it.time}</Text>
             </View>
           </View>
         </Card>

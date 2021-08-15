@@ -34,7 +34,7 @@ import { View, Text, FlatList } from "react-native";
 //   ],
 // };
 import { WorldMap } from "react-svg-worldmap";
-import MapView from "react-native-maps";
+
 import { getCity, getDetail } from "../../../apis";
 import { Card } from "native-base";
 import TypeTinh from "../../../data/TypeTinh";
